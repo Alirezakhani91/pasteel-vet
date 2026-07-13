@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>داشبورد کاربری | نیک‌پلاس</title>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: { vazir: ['Vazirmatn', 'sans-serif'] },
+        colors: {
+          cream: '#FAF9F5',
+          ink: '#16231F',
+          forest: '#1F5C52',
+          forestDark: '#153F38',
+          sage: '#7FA793',
+          lagoon: '#4E9C93',
+          mist: '#E7EFE9',
+          coral: '#E8926A',
+        }
+      }
+    }
+  }
+</script>
+<style>
+  * { font-family: 'Vazirmatn', sans-serif; }
+  .spinner {
+    border: 3px solid rgba(31,92,82,0.15);
+    border-top-color: #1F5C52;
+    border-radius: 50%;
+    width: 28px; height: 28px;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body class="bg-cream text-ink antialiased min-h-screen">
+
+<!-- ===================== NAVBAR ===================== -->
+<header class="sticky top-0 z-50 bg-cream/85 backdrop-blur-md border-b border-ink/[0.06]">
+  <div class="max-w-5xl mx-auto px-6 h-20 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-2.5">
+      <svg width="30" height="30" viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="19" stroke="#1F5C52" stroke-width="1.4"/>
+        <path d="M13 22c0-4 3-7 7-7s7 3 7 7-3 5-7 5-7-1-7-5Z" fill="#1F5C52"/>
+        <circle cx="14.5" cy="14" r="2.1" fill="#1F5C52"/>
+        <circle cx="19.5" cy="11.5" r="2.1" fill="#1F5C52"/>
+        <circle cx="25.5" cy="14" r="2.1" fill="#1F5C52"/>
+      </svg>
+      <span class="text-lg font-extrabold tracking-tight text-forestDark">نیک‌پلاس</span>
+    </a>
+    <button id="logoutBtn" class="flex items-center gap-2 text-sm font-bold text-ink/60 hover:text-red-600 transition-colors">
+      خروج از حساب
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- ===================== LOADING STATE ===================== -->
+<div id="pageLoading" class="flex flex-col items-center justify-center py-32 gap-4">
+  <div class="spinner"></div>
+  <p class="text-sm text-ink/40">در حال بارگذاری اطلاعات...</p>
+</div>
+
+<!-- ===================== MAIN CONTENT ===================== -->
+<main id="pageContent" class="hidden max-w-5xl mx-auto px-6 py-10">
+
+  <!-- greeting -->
+  <div class="mb-9">
+    <p class="text-sm text-ink/40 mb-1">خوش آمدید،</p>
+    <h1 id="userName" class="text-2xl sm:text-3xl font-extrabold text-forestDark">کاربر عزیز</h1>
+  </div>
+
+  <!-- action bar -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+    <h2 class="text-lg font-bold text-forestDark">نوبت‌های من</h2>
+    <a href="booking.html" class="bg-forest hover:bg-forestDark text-white font-bold px-6 py-3 rounded-xl transition-all shadow-lg shadow-forest/25 text-sm text-center flex items-center justify-center gap-2">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      رزرو نوبت جدید
+    </a>
+  </div>
+
+  <!-- appointments list -->
+  <div id="appointmentsList" class="space-y-4"></div>
+
+  <!-- empty state -->
+  <div id="emptyState" class="hidden text-center py-16 bg-white rounded-[2rem] border border-ink/[0.06]">
+    <p class="text-ink/50 mb-5">هنوز هیچ نوبتی رزرو نکرده‌اید.</p>
+    <a href="booking.html" class="inline-block bg-forest hover:bg-forestDark text-white font-bold px-7 py-3.5 rounded-xl transition-all shadow-lg shadow-forest/25 text-sm">
+      رزرو اولین نوبت
+    </a>
+  </div>
+
+  <!-- error state -->
+  <p id="loadError" class="hidden text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3 mt-4"></p>
+
+</main>
+
+<script src="supabase-client.js"></script>
+<script>
+  const statusMap = {
+    pending:   { label: 'در انتظار تایید', classes: 'bg-amber-50 text-amber-700' },
+    confirmed: { label: 'تایید شده',       classes: 'bg-mist text-forest' },
+    completed: { label: 'انجام شده',       classes: 'bg-ink/[0.06] text-ink/50' },
+    cancelled: { label: 'لغو شده',         classes: 'bg-red-50 text-red-600' },
+  };
+
+  function formatDate(dateStr) {
+    try {
+      return new Date(dateStr).toLocaleDateString('fa-IR', { year: 'numeric', month: 'long', day: 'numeric' });
+    } catch { return dateStr; }
+  }
+
+  function renderAppointments(appointments) {
+    const list = document.getElementById('appointmentsList');
+    const empty = document.getElementById('emptyState');
+
+    if (!appointments || appointments.length === 0) {
+      empty.classList.remove('hidden');
+      return;
+    }
+
+    list.innerHTML = appointments.map(appt => {
+      const status = statusMap[appt.status] || { label: appt.status || 'نامشخص', classes: 'bg-ink/[0.06] text-ink/50' };
+      const serviceTitle = appt.services?.title || 'خدمت نامشخص';
+      const doctorName = appt.doctors?.profiles?.full_name;
+      const doctorSpecialty = appt.doctors?.specialty;
+
+      return `
+        <div class="bg-white rounded-2xl border border-ink/[0.06] p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2.5 mb-2">
+              <h3 class="font-bold text-forestDark">${serviceTitle}</h3>
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full ${status.classes}">${status.label}</span>
+            </div>
+            <p class="text-sm text-ink/55">
+              ${appt.pet_name ? 'حیوان خانگی: ' + appt.pet_name + ' · ' : ''}
+              ${formatDate(appt.appointment_date)} · ساعت ${appt.appointment_time || ''}
+            </p>
+            ${doctorName ? `<p class="text-xs text-ink/40 mt-1">دامپزشک: ${doctorName}${doctorSpecialty ? ' (' + doctorSpecialty + ')' : ''}</p>` : ''}
+            ${appt.notes ? `<p class="text-xs text-ink/40 mt-1">یادداشت: ${appt.notes}</p>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  async function init() {
+    // 1) check session
+    const { data: { session } } = await supabaseClient.auth.getSession();
+
+    if (!session) {
+      window.location.href = 'auth.html';
+      return;
+    }
+
+    const user = session.user;
+
+    // 2) load profile name
+    const { data: profile } = await supabaseClient
+      .from('profiles')
+      .select('full_name')
+      .eq('id', user.id)
+      .single();
+
+    if (profile?.full_name) {
+      document.getElementById('userName').textContent = profile.full_name;
+    }
+
+    // 3) load appointments
+    const { data: appointments, error } = await supabaseClient
+      .from('appointments')
+      .select(`
+        id, pet_name, appointment_date, appointment_time, status, notes,
+        services ( title, duration_minutes ),
+        doctors ( specialty, profiles ( full_name ) )
+      `)
+      .eq('patient_id', user.id)
+      .order('appointment_date', { ascending: true })
+      .order('appointment_time', { ascending: true });
+
+    document.getElementById('pageLoading').classList.add('hidden');
+    document.getElementById('pageContent').classList.remove('hidden');
+
+    if (error) {
+      console.error(error);
+      const errBox = document.getElementById('loadError');
+      errBox.textContent = 'خطا در بارگذاری نوبت‌ها. لطفاً صفحه را دوباره بارگذاری کنید.';
+      errBox.classList.remove('hidden');
+      return;
+    }
+
+    renderAppointments(appointments);
+  }
+
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await supabaseClient.auth.signOut();
+    window.location.href = 'auth.html';
+  });
+
+  init();
+</script>
+
+</body>
+</html>
