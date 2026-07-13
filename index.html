@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نیک‌پلاس | کلینیک دامپزشکی</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: { vazir: ['Vazirmatn', 'sans-serif'] },
+        colors: {
+          cream: '#FAF9F5',
+          ink: '#16231F',
+          forest: '#1F5C52',
+          forestDark: '#153F38',
+          sage: '#7FA793',
+          lagoon: '#4E9C93',
+          mist: '#E7EFE9',
+          coral: '#E8926A',
+        }
+      }
+    }
+  }
+</script>
+<style>
+  * { font-family: 'Vazirmatn', sans-serif; }
+  html { scroll-behavior: smooth; }
+
+  .heartbeat-path {
+    stroke-dasharray: 1400;
+    stroke-dashoffset: 1400;
+    animation: draw 3.2s ease-out forwards, pulseGlow 3.2s ease-out .2s;
+  }
+  @keyframes draw {
+    to { stroke-dashoffset: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .heartbeat-path { animation: none; stroke-dashoffset: 0; }
+    .reveal { opacity: 1 !important; transform: none !important; }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  .paw-marker {
+    opacity: 0;
+    animation: fadeIn .5s ease forwards;
+  }
+  @keyframes fadeIn { to { opacity: 1; } }
+</style>
+</head>
+<body class="bg-cream text-ink antialiased selection:bg-lagoon/30">
+
+<!-- ===================== NAVBAR ===================== -->
+<header class="sticky top-0 z-50 bg-cream/85 backdrop-blur-md border-b border-ink/[0.06]">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between">
+    <a href="#" class="flex items-center gap-2.5">
+      <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="19" stroke="#1F5C52" stroke-width="1.4"/>
+        <path d="M13 22c0-4 3-7 7-7s7 3 7 7-3 5-7 5-7-1-7-5Z" fill="#1F5C52"/>
+        <circle cx="14.5" cy="14" r="2.1" fill="#1F5C52"/>
+        <circle cx="19.5" cy="11.5" r="2.1" fill="#1F5C52"/>
+        <circle cx="25.5" cy="14" r="2.1" fill="#1F5C52"/>
+      </svg>
+      <span class="text-xl font-extrabold tracking-tight text-forestDark">نیک‌پلاس</span>
+    </a>
+
+    <nav class="hidden md:flex items-center gap-9 text-[15px] font-medium text-ink/70">
+      <a href="#services" class="hover:text-forest transition-colors">خدمات</a>
+      <a href="#how" class="hover:text-forest transition-colors">روند نوبت‌دهی</a>
+      <a href="#doctors" class="hover:text-forest transition-colors">دامپزشکان</a>
+      <a href="#testimonials" class="hover:text-forest transition-colors">نظرات</a>
+      <a href="#faq" class="hover:text-forest transition-colors">سوالات متداول</a>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <a href="#" class="hidden sm:inline-block text-sm font-semibold text-forest hover:text-forestDark transition-colors">ورود</a>
+      <a href="#booking" class="bg-forest hover:bg-forestDark text-white text-sm font-bold px-5 py-2.5 rounded-full transition-all shadow-sm shadow-forest/20 hover:shadow-md hover:shadow-forest/30">
+        دریافت نوبت
+      </a>
+      <button id="menuBtn" class="md:hidden p-2 text-ink/70" aria-label="باز کردن منو">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- mobile menu -->
+  <div id="mobileMenu" class="hidden md:hidden px-6 pb-5 flex flex-col gap-4 text-ink/75 font-medium border-t border-ink/[0.06] pt-4">
+    <a href="#services" class="hover:text-forest">خدمات</a>
+    <a href="#how" class="hover:text-forest">روند نوبت‌دهی</a>
+    <a href="#doctors" class="hover:text-forest">دامپزشکان</a>
+    <a href="#testimonials" class="hover:text-forest">نظرات</a>
+    <a href="#faq" class="hover:text-forest">سوالات متداول</a>
+    <a href="#" class="text-forest font-semibold">ورود</a>
+  </div>
+</header>
+
+<!-- ===================== HERO ===================== -->
+<section class="relative overflow-hidden">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 pt-14 lg:pt-20 pb-10 grid lg:grid-cols-2 gap-12 items-center">
+
+    <div class="order-2 lg:order-1">
+      <div class="inline-flex items-center gap-2 bg-mist text-forest text-xs font-bold px-3.5 py-1.5 rounded-full mb-6">
+        <span class="w-1.5 h-1.5 rounded-full bg-lagoon animate-pulse"></span>
+        همین حالا باز و پذیرای حیوان خانگی شماست
+      </div>
+
+      <h1 class="text-4xl sm:text-5xl lg:text-[3.4rem] font-extrabold leading-[1.25] text-forestDark">
+        قلب حیوان خانگی‌تان،
+        <span class="relative inline-block text-forest">
+          دغدغه ما
+          <svg class="absolute -bottom-1.5 right-0 w-full" height="8" viewBox="0 0 200 8" fill="none" preserveAspectRatio="none">
+            <path d="M2 6C40 2 160 2 198 6" stroke="#7FA793" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </span>
+        است
+      </h1>
+
+      <p class="mt-6 text-lg text-ink/60 leading-[1.9] max-w-lg">
+        نوبت ویزیت، واکسیناسیون و مراقبت‌های تخصصی را در کمتر از دو دقیقه و بدون تماس تلفنی رزرو کنید. تیمی از دامپزشکان دلسوز، همیشه در کنار نیک‌پلاس.
+      </p>
+
+      <div class="mt-9 flex flex-col sm:flex-row gap-3.5">
+        <a href="#booking" class="group bg-forest hover:bg-forestDark text-white font-bold px-8 py-4 rounded-2xl text-base transition-all shadow-lg shadow-forest/25 flex items-center justify-center gap-2">
+          دریافت نوبت آنلاین
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" class="transition-transform group-hover:-translate-x-1">
+            <path d="M15 6l-6 6 6 6" transform="rotate(180 12 12)"/>
+          </svg>
+        </a>
+        <a href="#services" class="border-2 border-ink/10 hover:border-forest/40 text-ink/70 hover:text-forest font-bold px-8 py-4 rounded-2xl text-base transition-colors text-center">
+          مشاهده خدمات
+        </a>
+      </div>
+
+      <div class="mt-12 flex items-center gap-8 flex-wrap">
+        <div>
+          <p class="text-2xl font-extrabold text-forestDark">۱۲٬۴۰۰+</p>
+          <p class="text-xs text-ink/50 mt-1">حیوان خانگی درمان‌شده</p>
+        </div>
+        <div class="w-px h-9 bg-ink/10"></div>
+        <div>
+          <p class="text-2xl font-extrabold text-forestDark">۹ سال</p>
+          <p class="text-xs text-ink/50 mt-1">سابقه فعالیت بالینی</p>
+        </div>
+        <div class="w-px h-9 bg-ink/10"></div>
+        <div>
+          <p class="text-2xl font-extrabold text-forestDark">۴.۹ / ۵</p>
+          <p class="text-xs text-ink/50 mt-1">رضایت صاحبان حیوانات</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIGNATURE ELEMENT: heartbeat line that resolves into a paw print -->
+    <div class="order-1 lg:order-2 relative">
+      <div class="relative bg-white rounded-[2rem] border border-ink/[0.06] shadow-xl shadow-forest/[0.06] p-8 sm:p-10 overflow-hidden">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <p class="text-xs text-ink/40 font-medium">پایش زنده</p>
+            <p class="text-sm font-bold text-forestDark">ضربان قلب «لوسی» 🐾</p>
+          </div>
+          <span class="text-xs font-bold text-lagoon bg-mist px-3 py-1 rounded-full">پایدار</span>
+        </div>
+
+        <svg viewBox="0 0 480 200" class="w-full h-auto" fill="none">
+          <path class="heartbeat-path"
+            d="M0 120
+               L70 120
+               L92 70
+               L112 165
+               L132 30
+               L152 120
+               C 170 120, 178 108, 190 118
+               C 200 126, 206 138, 214 128
+               C 220 120, 226 112, 234 122
+               C 240 130, 246 140, 254 130
+               L 262 122
+               C 268 116, 276 108, 284 120
+               C 292 132, 300 140, 310 126
+               L 320 100
+               L 336 150
+               L 352 60
+               L 368 120
+               L 480 120"
+            stroke="#1F5C52" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+
+        <div class="mt-4 flex items-center gap-2 text-ink/40 text-xs">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#E8926A"><circle cx="12" cy="12" r="6"/></svg>
+          از این پس، هر ضربان یعنی یک نگهبان دلسوز کنارشان است
+        </div>
+      </div>
+
+      <!-- floating badge -->
+      <div class="absolute -bottom-6 -right-4 sm:-right-8 bg-forestDark text-white rounded-2xl px-5 py-4 shadow-xl flex items-center gap-3">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M12 21s-7.5-4.6-10-9.3C.4 8 2 4 6 4c2 0 3.5 1.2 4.4 2.6l1.6 2.4 1.6-2.4C14.5 5.2 16 4 18 4c4 0 5.6 4 4 7.7C19.5 16.4 12 21 12 21z"/></svg>
+        <div>
+          <p class="text-sm font-bold">نوبت فوری موجود</p>
+          <p class="text-xs text-white/60">امروز، ساعت ۱۶:۳۰</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TRUST STRIP ===================== -->
+<section class="border-y border-ink/[0.06] bg-white/60">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 py-6 flex flex-wrap items-center justify-center gap-x-12 gap-y-3 text-ink/40 text-sm font-medium">
+    <span>عضو نظام دامپزشکی ایران</span>
+    <span class="w-1 h-1 rounded-full bg-ink/20 hidden sm:block"></span>
+    <span>مجهز به آزمایشگاه و رادیولوژی</span>
+    <span class="w-1 h-1 rounded-full bg-ink/20 hidden sm:block"></span>
+    <span>پذیرش اورژانس شبانه‌روزی</span>
+    <span class="w-1 h-1 rounded-full bg-ink/20 hidden sm:block"></span>
+    <span>داروخانه دامپزشکی مستقل</span>
+  </div>
+</section>
+
+<!-- ===================== SERVICES ===================== -->
+<section id="services" class="max-w-7xl mx-auto px-6 lg:px-10 py-24">
+  <div class="reveal max-w-xl mx-auto text-center mb-14">
+    <p class="text-lagoon font-bold text-sm mb-3">خدمات کلینیک</p>
+    <h2 class="text-3xl sm:text-4xl font-extrabold text-forestDark leading-tight">مراقبتی کامل، از معاینه تا جراحی</h2>
+    <p class="mt-4 text-ink/55 leading-8">هر خدمت را می‌توانید مستقیماً از همین صفحه رزرو کنید؛ کافی‌ست روی «دریافت نوبت» کلیک کنید.</p>
+  </div>
+
+  <div id="servicesContainer" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    <p class="col-span-full text-center text-ink/40">در حال بارگذاری خدمات...</p>
+  </div>
+</section>
+
+<!-- ===================== HOW IT WORKS ===================== -->
+<section id="how" class="bg-white border-y border-ink/[0.06]">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 py-24">
+    <div class="reveal max-w-xl mx-auto text-center mb-16">
+      <p class="text-lagoon font-bold text-sm mb-3">روند نوبت‌دهی</p>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-forestDark leading-tight">در ۴ گام ساده، نوبت بگیرید</h2>
+    </div>
+
+    <div class="grid md:grid-cols-4 gap-6 relative">
+      <div class="hidden md:block absolute top-7 right-[12%] left-[12%] h-px bg-ink/10"></div>
+
+      <div class="reveal relative text-center">
+        <div class="mx-auto w-14 h-14 rounded-full bg-forest text-white flex items-center justify-center font-extrabold text-lg relative z-10">۱</div>
+        <h3 class="mt-5 font-bold text-forestDark">انتخاب خدمت</h3>
+        <p class="mt-2 text-sm text-ink/55 leading-7">نوع مراقبتی که حیوان‌ خانگی‌تان نیاز دارد را انتخاب کنید.</p>
+      </div>
+      <div class="reveal relative text-center">
+        <div class="mx-auto w-14 h-14 rounded-full bg-forest text-white flex items-center justify-center font-extrabold text-lg relative z-10">۲</div>
+        <h3 class="mt-5 font-bold text-forestDark">انتخاب دامپزشک</h3>
+        <p class="mt-2 text-sm text-ink/55 leading-7">از میان متخصصان کلینیک، پزشک مورد نظر را برگزینید.</p>
+      </div>
+      <div class="reveal relative text-center">
+        <div class="mx-auto w-14 h-14 rounded-full bg-forest text-white flex items-center justify-center font-extrabold text-lg relative z-10">۳</div>
+        <h3 class="mt-5 font-bold text-forestDark">انتخاب زمان</h3>
+        <p class="mt-2 text-sm text-ink/55 leading-7">روز و ساعت خالی و مناسب برنامه خودتان را ثبت کنید.</p>
+      </div>
+      <div class="reveal relative text-center">
+        <div class="mx-auto w-14 h-14 rounded-full bg-forest text-white flex items-center justify-center font-extrabold text-lg relative z-10">۴</div>
+        <h3 class="mt-5 font-bold text-forestDark">تأیید نهایی</h3>
+        <p class="mt-2 text-sm text-ink/55 leading-7">اطلاعات حیوان و صاحب آن را وارد و نوبت را نهایی کنید.</p>
+      </div>
+    </div>
+
+    <div class="reveal mt-14 text-center">
+      <a id="booking" href="#" class="inline-block bg-forest hover:bg-forestDark text-white font-bold px-9 py-4 rounded-2xl transition-all shadow-lg shadow-forest/25">
+        شروع فرآیند نوبت‌دهی
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DOCTORS ===================== -->
+<section id="doctors" class="max-w-7xl mx-auto px-6 lg:px-10 py-24">
+  <div class="reveal max-w-xl mx-auto text-center mb-14">
+    <p class="text-lagoon font-bold text-sm mb-3">تیم درمانی</p>
+    <h2 class="text-3xl sm:text-4xl font-extrabold text-forestDark leading-tight">دامپزشکان نیک‌پلاس</h2>
+  </div>
+
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+    <div class="reveal bg-white rounded-3xl border border-ink/[0.06] p-6 text-center hover:shadow-lg hover:shadow-forest/[0.06] transition-shadow">
+      <div class="w-20 h-20 mx-auto rounded-full bg-mist flex items-center justify-center text-2xl font-extrabold text-forest">م.ا</div>
+      <h3 class="mt-4 font-bold text-forestDark">دکتر مریم احمدی</h3>
+      <p class="text-xs text-ink/50 mt-1">دامپزشک عمومی و پوست</p>
+    </div>
+    <div class="reveal bg-white rounded-3xl border border-ink/[0.06] p-6 text-center hover:shadow-lg hover:shadow-forest/[0.06] transition-shadow">
+      <div class="w-20 h-20 mx-auto rounded-full bg-mist flex items-center justify-center text-2xl font-extrabold text-forest">ع.ر</div>
+      <h3 class="mt-4 font-bold text-forestDark">دکتر علی رضایی</h3>
+      <p class="text-xs text-ink/50 mt-1">جراح ارتوپد دامپزشکی</p>
+    </div>
+    <div class="reveal bg-white rounded-3xl border border-ink/[0.06] p-6 text-center hover:shadow-lg hover:shadow-forest/[0.06] transition-shadow">
+      <div class="w-20 h-20 mx-auto rounded-full bg-mist flex items-center justify-center text-2xl font-extrabold text-forest">س.ک</div>
+      <h3 class="mt-4 font-bold text-forestDark">دکتر سارا کریمی</h3>
+      <p class="text-xs text-ink/50 mt-1">متخصص تغذیه و داخلی</p>
+    </div>
+    <div class="reveal bg-white rounded-3xl border border-ink/[0.06] p-6 text-center hover:shadow-lg hover:shadow-forest/[0.06] transition-shadow">
+      <div class="w-20 h-20 mx-auto rounded-full bg-mist flex items-center justify-center text-2xl font-extrabold text-forest">ح.م</div>
+      <h3 class="mt-4 font-bold text-forestDark">دکتر حسین مرادی</h3>
+      <p class="text-xs text-ink/50 mt-1">رادیولوژی و سونوگرافی</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TESTIMONIALS ===================== -->
+<section id="testimonials" class="bg-forestDark">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 py-24">
+    <div class="reveal max-w-xl mx-auto text-center mb-14">
+      <p class="text-sage font-bold text-sm mb-3">نظر مشتریان</p>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-white leading-tight">داستان‌هایی از دل کلینیک</h2>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-5">
+      <div class="reveal bg-white/[0.06] border border-white/10 rounded-3xl p-7">
+        <p class="text-white/80 leading-8 text-sm">"نوبت آنلاین گرفتن فوق‌العاده راحت بود، اصلاً منتظر تلفن نموندم. دکتر هم با حوصله معاینه کرد."</p>
+        <p class="mt-5 text-sm font-bold text-white">نگار توکلی</p>
+        <p class="text-xs text-white/40">صاحب گربه «میو»</p>
+      </div>
+      <div class="reveal bg-white/[0.06] border border-white/10 rounded-3xl p-7">
+        <p class="text-white/80 leading-8 text-sm">"سگم نیاز به جراحی اورژانسی داشت، نیک‌پلاس همون شب پذیرشش کرد. ممنونم از این تیم."</p>
+        <p class="mt-5 text-sm font-bold text-white">امیر حسینی</p>
+        <p class="text-xs text-white/40">صاحب سگ «رکس»</p>
+      </div>
+      <div class="reveal bg-white/[0.06] border border-white/10 rounded-3xl p-7">
+        <p class="text-white/80 leading-8 text-sm">"یادآوری خودکار واکسن خیلی به‌دردم خورد، دیگه هیچ نوبتی رو فراموش نمی‌کنم."</p>
+        <p class="mt-5 text-sm font-bold text-white">النا موسوی</p>
+        <p class="text-xs text-white/40">صاحب خرگوش «بارفی»</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faq" class="max-w-3xl mx-auto px-6 lg:px-10 py-24">
+  <div class="reveal text-center mb-12">
+    <p class="text-lagoon font-bold text-sm mb-3">سوالات متداول</p>
+    <h2 class="text-3xl sm:text-4xl font-extrabold text-forestDark leading-tight">پاسخ به پرسش‌های رایج</h2>
+  </div>
+
+  <div class="reveal space-y-3" id="faqList">
+    <div class="faq-item bg-white border border-ink/[0.06] rounded-2xl overflow-hidden">
+      <button class="faq-btn w-full flex items-center justify-between text-right px-6 py-5 font-bold text-forestDark">
+        آیا برای نوبت‌دهی باید هزینه‌ای پرداخت کنم؟
+        <svg class="faq-icon w-5 h-5 text-forest transition-transform shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="faq-panel hidden px-6 pb-5 text-sm text-ink/60 leading-7">
+        خیر، رزرو نوبت کاملاً رایگان است و هزینه فقط هنگام حضور در کلینیک و دریافت خدمت محاسبه می‌شود.
+      </div>
+    </div>
+    <div class="faq-item bg-white border border-ink/[0.06] rounded-2xl overflow-hidden">
+      <button class="faq-btn w-full flex items-center justify-between text-right px-6 py-5 font-bold text-forestDark">
+        چطور نوبت رزرو شده را لغو یا تغییر دهم؟
+        <svg class="faq-icon w-5 h-5 text-forest transition-transform shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="faq-panel hidden px-6 pb-5 text-sm text-ink/60 leading-7">
+        از داشبورد کاربری خود، بخش «نوبت‌های من» را باز کرده و روی گزینه لغو یا ویرایش نوبت مورد نظر کلیک کنید.
+      </div>
+    </div>
+    <div class="faq-item bg-white border border-ink/[0.06] rounded-2xl overflow-hidden">
+      <button class="faq-btn w-full flex items-center justify-between text-right px-6 py-5 font-bold text-forestDark">
+        در صورت اورژانس شبانه چه کار کنم؟
+        <svg class="faq-icon w-5 h-5 text-forest transition-transform shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="faq-panel hidden px-6 pb-5 text-sm text-ink/60 leading-7">
+        بخش اورژانس کلینیک به‌صورت شبانه‌روزی فعال است؛ نیازی به نوبت‌گیری قبلی نیست و می‌توانید مستقیماً مراجعه کنید.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CTA STRIP ===================== -->
+<section class="max-w-7xl mx-auto px-6 lg:px-10 pb-24">
+  <div class="reveal bg-mist rounded-[2rem] px-8 py-14 sm:py-16 text-center relative overflow-hidden">
+    <h2 class="text-2xl sm:text-3xl font-extrabold text-forestDark relative z-10">همین امروز، نوبت حیوان خانگی‌تان را رزرو کنید</h2>
+    <p class="mt-3 text-ink/55 relative z-10">کمتر از دو دقیقه زمان می‌برد، بدون تماس تلفنی و بدون معطلی</p>
+    <a href="#booking" class="mt-8 inline-block bg-forest hover:bg-forestDark text-white font-bold px-9 py-4 rounded-2xl transition-all shadow-lg shadow-forest/25 relative z-10">
+      دریافت نوبت آنلاین
+    </a>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="bg-forestDark text-white/60">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 py-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
+    <div>
+      <div class="flex items-center gap-2.5 mb-4">
+        <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
+          <circle cx="20" cy="20" r="19" stroke="#7FA793" stroke-width="1.4"/>
+          <path d="M13 22c0-4 3-7 7-7s7 3 7 7-3 5-7 5-7-1-7-5Z" fill="#7FA793"/>
+          <circle cx="14.5" cy="14" r="2.1" fill="#7FA793"/>
+          <circle cx="19.5" cy="11.5" r="2.1" fill="#7FA793"/>
+          <circle cx="25.5" cy="14" r="2.1" fill="#7FA793"/>
+        </svg>
+        <span class="text-lg font-extrabold text-white">نیک‌پلاس</span>
+      </div>
+      <p class="text-sm leading-7">کلینیک تخصصی دامپزشکی با هدف مراقبت دلسوزانه و دسترسی آسان به خدمات درمانی حیوانات خانگی.</p>
+    </div>
+    <div>
+      <h4 class="text-white font-bold mb-4 text-sm">دسترسی سریع</h4>
+      <ul class="space-y-2.5 text-sm">
+        <li><a href="#services" class="hover:text-white transition-colors">خدمات کلینیک</a></li>
+        <li><a href="#doctors" class="hover:text-white transition-colors">دامپزشکان</a></li>
+        <li><a href="#booking" class="hover:text-white transition-colors">رزرو نوبت</a></li>
+        <li><a href="#faq" class="hover:text-white transition-colors">سوالات متداول</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="text-white font-bold mb-4 text-sm">تماس با ما</h4>
+      <ul class="space-y-2.5 text-sm">
+        <li>تهران، خیابان ولیعصر، پلاک ۱۲۴</li>
+        <li>۰۲۱-۸۸۷۷۶۶۵۵</li>
+        <li>info@nikplus-vet.ir</li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="text-white font-bold mb-4 text-sm">ساعات کاری</h4>
+      <ul class="space-y-2.5 text-sm">
+        <li>شنبه تا پنج‌شنبه: ۹ تا ۲۱</li>
+        <li>جمعه‌ها: ۱۰ تا ۱۸</li>
+        <li>اورژانس: شبانه‌روزی</li>
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-white/10 py-5 text-center text-xs text-white/35">
+    © ۱۴۰۴ کلینیک دامپزشکی نیک‌پلاس. تمامی حقوق محفوظ است.
+  </div>
+</footer>
+
+<script>
+  // mobile menu toggle
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+
+  // scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => io.observe(el));
+
+  // faq accordion
+  document.querySelectorAll('.faq-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const panel = btn.nextElementSibling;
+      const icon = btn.querySelector('.faq-icon');
+      const isOpen = !panel.classList.contains('hidden');
+      document.querySelectorAll('.faq-panel').forEach(p => p.classList.add('hidden'));
+      document.querySelectorAll('.faq-icon').forEach(i => i.classList.remove('rotate-180'));
+      if (!isOpen) {
+        panel.classList.remove('hidden');
+        icon.classList.add('rotate-180');
+      }
+    });
+  });
+</script>
+
+<script src="supabase-client.js"></script>
+</body>
+</html>
