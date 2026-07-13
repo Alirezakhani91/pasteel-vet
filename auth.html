@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ورود یا ثبت‌نام | نیک‌پلاس</title>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: { vazir: ['Vazirmatn', 'sans-serif'] },
+        colors: {
+          cream: '#FAF9F5',
+          ink: '#16231F',
+          forest: '#1F5C52',
+          forestDark: '#153F38',
+          sage: '#7FA793',
+          lagoon: '#4E9C93',
+          mist: '#E7EFE9',
+          coral: '#E8926A',
+        }
+      }
+    }
+  }
+</script>
+<style>
+  * { font-family: 'Vazirmatn', sans-serif; }
+  .tab-active { background: #1F5C52; color: white; }
+  .spinner {
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    width: 16px; height: 16px;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body class="bg-cream text-ink antialiased min-h-screen flex items-center justify-center px-4 py-10">
+
+<div class="w-full max-w-md">
+
+  <!-- logo -->
+  <div class="flex items-center justify-center gap-2.5 mb-8">
+    <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
+      <circle cx="20" cy="20" r="19" stroke="#1F5C52" stroke-width="1.4"/>
+      <path d="M13 22c0-4 3-7 7-7s7 3 7 7-3 5-7 5-7-1-7-5Z" fill="#1F5C52"/>
+      <circle cx="14.5" cy="14" r="2.1" fill="#1F5C52"/>
+      <circle cx="19.5" cy="11.5" r="2.1" fill="#1F5C52"/>
+      <circle cx="25.5" cy="14" r="2.1" fill="#1F5C52"/>
+    </svg>
+    <span class="text-xl font-extrabold tracking-tight text-forestDark">نیک‌پلاس</span>
+  </div>
+
+  <div class="bg-white rounded-[2rem] border border-ink/[0.06] shadow-xl shadow-forest/[0.06] p-8">
+
+    <!-- tabs -->
+    <div class="flex bg-mist rounded-2xl p-1.5 mb-7">
+      <button id="tabLogin" class="tab-active flex-1 py-2.5 rounded-xl text-sm font-bold transition-colors">ورود</button>
+      <button id="tabSignup" class="flex-1 py-2.5 rounded-xl text-sm font-bold text-ink/60 transition-colors">ثبت‌نام</button>
+    </div>
+
+    <!-- ============= LOGIN FORM ============= -->
+    <form id="loginForm" class="space-y-4">
+      <div>
+        <label class="block text-sm font-bold text-forestDark mb-1.5">ایمیل</label>
+        <input type="email" id="loginEmail" required placeholder="example@email.com"
+          class="w-full px-4 py-3 rounded-xl border border-ink/10 focus:border-forest focus:ring-2 focus:ring-forest/20 outline-none transition-all text-sm" dir="ltr">
+      </div>
+      <div>
+        <label class="block text-sm font-bold text-forestDark mb-1.5">رمز عبور</label>
+        <input type="password" id="loginPassword" required placeholder="••••••••"
+          class="w-full px-4 py-3 rounded-xl border border-ink/10 focus:border-forest focus:ring-2 focus:ring-forest/20 outline-none transition-all text-sm" dir="ltr">
+      </div>
+
+      <p id="loginError" class="hidden text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3"></p>
+
+      <button type="submit" id="loginBtn"
+        class="w-full bg-forest hover:bg-forestDark text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-forest/25 flex items-center justify-center gap-2">
+        <span>ورود به حساب کاربری</span>
+      </button>
+    </form>
+
+    <!-- ============= SIGNUP FORM ============= -->
+    <form id="signupForm" class="space-y-4 hidden">
+      <div>
+        <label class="block text-sm font-bold text-forestDark mb-1.5">نام و نام خانوادگی</label>
+        <input type="text" id="signupName" required placeholder="مثلاً: سارا احمدی"
+          class="w-full px-4 py-3 rounded-xl border border-ink/10 focus:border-forest focus:ring-2 focus:ring-forest/20 outline-none transition-all text-sm">
+      </div>
+      <div>
+        <label class="block text-sm font-bold text-forestDark mb-1.5">شماره موبایل</label>
+        <input type="tel" id="signupPhone" required placeholder="09121234567"
+          class="w-full px-4 py-3 rounded-xl border border-ink/10 focus:border-forest focus:ring-2 focus:ring-forest/20 outline-none transition-all text-sm" dir="ltr">
+      </div>
+      <div>
+        <label class="block text-sm font-bold text-forestDark mb-1.5">ایمیل</label>
+        <input type="email" id="signupEmail" required placeholder="example@email.com"
+          class="w-full px-4 py-3 rounded-xl border border-ink/10 focus:border-forest focus:ring-2 focus:ring-forest/20 outline-none transition-all text-sm" dir="ltr">
+      </div>
+      <div>
+        <label class="block text-sm font-bold text-forestDark mb-1.5">رمز عبور</label>
+        <input type="password" id="signupPassword" required minlength="6" placeholder="حداقل ۶ کاراکتر"
+          class="w-full px-4 py-3 rounded-xl border border-ink/10 focus:border-forest focus:ring-2 focus:ring-forest/20 outline-none transition-all text-sm" dir="ltr">
+      </div>
+
+      <p id="signupError" class="hidden text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3"></p>
+      <p id="signupSuccess" class="hidden text-sm text-forest bg-mist rounded-xl px-4 py-3"></p>
+
+      <button type="submit" id="signupBtn"
+        class="w-full bg-forest hover:bg-forestDark text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-forest/25 flex items-center justify-center gap-2">
+        <span>ساخت حساب کاربری</span>
+      </button>
+    </form>
+
+  </div>
+
+  <p class="text-center text-xs text-ink/40 mt-6">
+    با ورود یا ثبت‌نام، قوانین و مقررات نیک‌پلاس را می‌پذیرید.
+  </p>
+</div>
+
+<script src="supabase-client.js"></script>
+<script>
+  // ---------- tab switching ----------
+  const tabLogin = document.getElementById('tabLogin');
+  const tabSignup = document.getElementById('tabSignup');
+  const loginForm = document.getElementById('loginForm');
+  const signupForm = document.getElementById('signupForm');
+
+  tabLogin.addEventListener('click', () => {
+    tabLogin.classList.add('tab-active');
+    tabLogin.classList.remove('text-ink/60');
+    tabSignup.classList.remove('tab-active');
+    tabSignup.classList.add('text-ink/60');
+    loginForm.classList.remove('hidden');
+    signupForm.classList.add('hidden');
+  });
+
+  tabSignup.addEventListener('click', () => {
+    tabSignup.classList.add('tab-active');
+    tabSignup.classList.remove('text-ink/60');
+    tabLogin.classList.remove('tab-active');
+    tabLogin.classList.add('text-ink/60');
+    signupForm.classList.remove('hidden');
+    loginForm.classList.add('hidden');
+  });
+
+  // ---------- helper: button loading state ----------
+  function setLoading(btn, loading, label) {
+    btn.disabled = loading;
+    btn.innerHTML = loading
+      ? `<span class="spinner"></span><span>در حال پردازش...</span>`
+      : `<span>${label}</span>`;
+  }
+
+  // ---------- LOGIN ----------
+  loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errorBox = document.getElementById('loginError');
+    errorBox.classList.add('hidden');
+
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const btn = document.getElementById('loginBtn');
+
+    setLoading(btn, true);
+
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+    setLoading(btn, false, 'ورود به حساب کاربری');
+
+    if (error) {
+      errorBox.textContent = 'ایمیل یا رمز عبور اشتباه است.';
+      errorBox.classList.remove('hidden');
+      return;
+    }
+
+    // ورود موفق -> تشخیص نقش کاربر و انتقال به داشبورد مناسب
+    const { data: profile } = await supabaseClient
+      .from('profiles')
+      .select('role')
+      .eq('id', data.user.id)
+      .single();
+
+    if (profile?.role === 'admin' || profile?.role === 'doctor') {
+      window.location.href = 'admin-dashboard.html';
+    } else {
+      window.location.href = 'dashboard.html';
+    }
+  });
+
+  // ---------- SIGNUP ----------
+  signupForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errorBox = document.getElementById('signupError');
+    const successBox = document.getElementById('signupSuccess');
+    errorBox.classList.add('hidden');
+    successBox.classList.add('hidden');
+
+    const fullName = document.getElementById('signupName').value.trim();
+    const phone = document.getElementById('signupPhone').value.trim();
+    const email = document.getElementById('signupEmail').value.trim();
+    const password = document.getElementById('signupPassword').value;
+    const btn = document.getElementById('signupBtn');
+
+    setLoading(btn, true);
+
+    // مرحله ۱: ساخت کاربر در سیستم احراز هویت
+    const { data, error } = await supabaseClient.auth.signUp({ email, password });
+
+    if (error) {
+      setLoading(btn, false, 'ساخت حساب کاربری');
+      errorBox.textContent = error.message.includes('already registered')
+        ? 'این ایمیل قبلاً ثبت‌نام کرده است.'
+        : 'خطا در ثبت‌نام. لطفاً دوباره تلاش کنید.';
+      errorBox.classList.remove('hidden');
+      return;
+    }
+
+    // مرحله ۲: ساخت ردیف پروفایل مرتبط با همین کاربر
+    const userId = data.user.id;
+    const { error: profileError } = await supabaseClient
+      .from('profiles')
+      .insert({ id: userId, full_name: fullName, phone: phone, role: 'patient' });
+
+    setLoading(btn, false, 'ساخت حساب کاربری');
+
+    if (profileError) {
+      errorBox.textContent = 'حساب ساخته شد ولی خطایی در ذخیره پروفایل رخ داد.';
+      errorBox.classList.remove('hidden');
+      console.error(profileError);
+      return;
+    }
+
+    // اگر session موجود باشد یعنی تایید ایمیل غیرفعال است -> مستقیم وارد شود
+    if (data.session) {
+      window.location.href = 'dashboard.html';
+    } else {
+      successBox.textContent = 'ثبت‌نام موفق بود! اکنون می‌توانید وارد شوید.';
+      successBox.classList.remove('hidden');
+      signupForm.reset();
+    }
+  });
+</script>
+
+</body>
+</html>
