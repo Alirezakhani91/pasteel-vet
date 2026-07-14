@@ -534,22 +534,53 @@
   });
 
 
-  // ---------------- پیش‌نمایش محلی عکس پزشک ----------------
+  // ---------------- عکس پروفایل پزشک: دریافت، پیش‌نمایش و آپلود ----------------
   let selectedDoctorPhotoFile = null;
   let doctorPhotoPreviewUrl = null;
+  let currentDoctorPhotoPath = null;
 
   function resetDoctorPhotoMessages() {
     document.getElementById('doctorPhotoError').classList.add('hidden');
     document.getElementById('doctorPhotoSuccess').classList.add('hidden');
   }
 
-  function showDoctorPhotoPreview(url) {
+  function showDoctorPhoto(url) {
     const image = document.getElementById('doctorPhotoPreview');
     const placeholder = document.getElementById('doctorPhotoPlaceholder');
 
-    image.src = url;
-    image.classList.remove('hidden');
-    placeholder.classList.add('hidden');
+    if (url) {
+      image.src = url;
+      image.classList.remove('hidden');
+      placeholder.classList.add('hidden');
+    } else {
+      image.removeAttribute('src');
+      image.classList.add('hidden');
+      placeholder.classList.remove('hidden');
+    }
+  }
+
+  async function loadMyDoctorPhoto() {
+    const errorBox = document.getElementById('doctorPhotoError');
+
+    const { data, error } = await supabaseClient
+      .from('doctors')
+      .select('photo_url, photo_path')
+      .eq('id', currentUserId)
+      .single();
+
+    if (error) {
+      console.error('خطا در دریافت عکس پزشک:', error);
+      errorBox.textContent = 'عکس فعلی دریافت نشد. لطفاً تنظیمات جدول پزشکان را بررسی کنید.';
+      errorBox.classList.remove('hidden');
+      return;
+    }
+
+    currentDoctorPhotoPath = data?.photo_path || null;
+    showDoctorPhoto(data?.photo_url || null);
+
+    if (data?.photo_url) {
+      document.getElementById('selectedPhotoName').textContent = 'عکس فعلی پروفایل';
+    }
   }
 
   document.getElementById('doctorPhotoInput').addEventListener('change', function () {
@@ -561,7 +592,9 @@
 
     if (!file) {
       selectedDoctorPhotoFile = null;
-      fileNameBox.textContent = 'هنوز عکسی انتخاب نشده است.';
+      fileNameBox.textContent = currentDoctorPhotoPath
+        ? 'عکس فعلی پروفایل'
+        : 'هنوز عکسی انتخاب نشده است.';
       return;
     }
 
@@ -571,7 +604,9 @@
     if (!allowedTypes.includes(file.type)) {
       this.value = '';
       selectedDoctorPhotoFile = null;
-      fileNameBox.textContent = 'هنوز عکسی انتخاب نشده است.';
+      fileNameBox.textContent = currentDoctorPhotoPath
+        ? 'عکس فعلی پروفایل'
+        : 'هنوز عکسی انتخاب نشده است.';
       errorBox.textContent = 'فقط فایل‌های JPG، PNG یا WebP قابل قبول هستند.';
       errorBox.classList.remove('hidden');
       return;
@@ -580,7 +615,9 @@
     if (file.size > maxSize) {
       this.value = '';
       selectedDoctorPhotoFile = null;
-      fileNameBox.textContent = 'هنوز عکسی انتخاب نشده است.';
+      fileNameBox.textContent = currentDoctorPhotoPath
+        ? 'عکس فعلی پروفایل'
+        : 'هنوز عکسی انتخاب نشده است.';
       errorBox.textContent = 'حجم عکس باید کمتر از ۳ مگابایت باشد.';
       errorBox.classList.remove('hidden');
       return;
@@ -594,14 +631,16 @@
     }
 
     doctorPhotoPreviewUrl = URL.createObjectURL(file);
-    showDoctorPhotoPreview(doctorPhotoPreviewUrl);
+    showDoctorPhoto(doctorPhotoPreviewUrl);
   });
 
-  document.getElementById('uploadDoctorPhotoBtn').addEventListener('click', function () {
+  document.getElementById('uploadDoctorPhotoBtn').addEventListener('click', async function () {
     resetDoctorPhotoMessages();
 
     const errorBox = document.getElementById('doctorPhotoError');
     const successBox = document.getElementById('doctorPhotoSuccess');
+    const fileInput = document.getElementById('doctorPhotoInput');
+    const fileNameBox = document.getElementById('selectedPhotoName');
 
     if (!selectedDoctorPhotoFile) {
       errorBox.textContent = 'ابتدا یک عکس انتخاب کنید.';
@@ -609,8 +648,112 @@
       return;
     }
 
-    successBox.textContent = 'عکس انتخاب شد. اتصال به فضای ذخیره‌سازی در مرحله بعد انجام می‌شود.';
-    successBox.classList.remove('hidden');
+    const button = this;
+    button.disabled = true;
+    button.textContent = 'در حال ذخیره...';
+
+    let uploadedNewPath = null;
+
+    try {
+      const file = selectedDoctorPhotoFile;
+
+      const extensionMap = {
+        'image/jpeg': 'jpg',
+        'image/png': 'png',
+        'image/webp': 'webp'
+      };
+
+      const extension = extensionMap[file.type];
+      const newFilePath = `${currentUserId}/profile-${Date.now()}.${extension}`;
+      uploadedNewPath = newFilePath;
+
+      // 1) آپلود عکس در Storage
+      const { error: uploadError } = await supabaseClient
+        .storage
+        .from('doctor-photos')
+        .upload(newFilePath, file, {
+          cacheControl: '3600',
+          contentType: file.type,
+          upsert: false
+        });
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      // 2) ساخت آدرس عمومی عکس
+      const { data: publicUrlData } = supabaseClient
+        .storage
+        .from('doctor-photos')
+        .getPublicUrl(newFilePath);
+
+      const publicUrl = publicUrlData?.publicUrl;
+
+      if (!publicUrl) {
+        throw new Error('آدرس عمومی عکس ساخته نشد.');
+      }
+
+      // 3) ذخیره آدرس و مسیر عکس در جدول doctors
+      const { error: updateError } = await supabaseClient
+        .from('doctors')
+        .update({
+          photo_url: publicUrl,
+          photo_path: newFilePath
+        })
+        .eq('id', currentUserId);
+
+      if (updateError) {
+        throw updateError;
+      }
+
+      // 4) حذف عکس قبلی بعد از ذخیره موفق عکس جدید
+      if (currentDoctorPhotoPath && currentDoctorPhotoPath !== newFilePath) {
+        const { error: removeOldError } = await supabaseClient
+          .storage
+          .from('doctor-photos')
+          .remove([currentDoctorPhotoPath]);
+
+        if (removeOldError) {
+          console.warn('عکس جدید ذخیره شد اما حذف عکس قبلی انجام نشد:', removeOldError);
+        }
+      }
+
+      currentDoctorPhotoPath = newFilePath;
+      selectedDoctorPhotoFile = null;
+      fileInput.value = '';
+
+      if (doctorPhotoPreviewUrl) {
+        URL.revokeObjectURL(doctorPhotoPreviewUrl);
+        doctorPhotoPreviewUrl = null;
+      }
+
+      showDoctorPhoto(`${publicUrl}?v=${Date.now()}`);
+      fileNameBox.textContent = 'عکس فعلی پروفایل';
+
+      successBox.textContent = 'عکس پروفایل شما با موفقیت ذخیره شد.';
+      successBox.classList.remove('hidden');
+
+    } catch (error) {
+      console.error('خطا در ذخیره عکس پزشک:', error);
+
+      // اگر فایل آپلود شده ولی ثبت دیتابیس ناموفق بوده، فایل جدید پاک شود
+      if (uploadedNewPath) {
+        await supabaseClient
+          .storage
+          .from('doctor-photos')
+          .remove([uploadedNewPath]);
+      }
+
+      errorBox.textContent =
+        error?.message
+          ? `ذخیره عکس انجام نشد: ${error.message}`
+          : 'ذخیره عکس انجام نشد. تنظیمات Storage و دسترسی‌ها را بررسی کنید.';
+      errorBox.classList.remove('hidden');
+
+    } finally {
+      button.disabled = false;
+      button.textContent = 'ذخیره عکس';
+    }
   });
 
   async function init() {
@@ -645,6 +788,7 @@
 
     if (myRole === 'doctor') {
       document.getElementById('doctorPhotoSection').classList.remove('hidden');
+      await loadMyDoctorPhoto();
 
       document.getElementById('myServicesSection').classList.remove('hidden');
       await loadMyServices();
