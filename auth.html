@@ -126,6 +126,16 @@
 
 <script src="supabase-client.js"></script>
 <script>
+  // اگر کاربر از قبل لاگین کرده باشد، دیگر فرم ورود نشانش نمی‌دهیم؛
+  // مستقیم به صفحه‌ی اول برمی‌گردد (چون آنجا وضعیت لاگین را نشان می‌دهد)
+  (async function checkExistingSession() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session) {
+      window.location.href = 'index.html';
+    }
+  })();
+</script>
+<script>
   // ---------- tab switching ----------
   const tabLogin = document.getElementById('tabLogin');
   const tabSignup = document.getElementById('tabSignup');
@@ -180,18 +190,8 @@
       return;
     }
 
-    // ورود موفق -> تشخیص نقش کاربر و انتقال به داشبورد مناسب
-    const { data: profile } = await supabaseClient
-      .from('profiles')
-      .select('role')
-      .eq('id', data.user.id)
-      .single();
-
-    if (profile?.role === 'admin' || profile?.role === 'doctor') {
-      window.location.href = 'admin-dashboard.html';
-    } else {
-      window.location.href = 'dashboard.html';
-    }
+    // ورود موفق -> بازگشت به صفحه‌ی اول (که خودش دکمه‌ی «ورود» را به «حساب من» تبدیل می‌کند)
+    window.location.href = 'index.html';
   });
 
   // ---------- SIGNUP ----------
@@ -239,7 +239,7 @@
 
     // اگر session موجود باشد یعنی تایید ایمیل غیرفعال است -> مستقیم وارد شود
     if (data.session) {
-      window.location.href = 'dashboard.html';
+      window.location.href = 'index.html';
     } else {
       successBox.textContent = 'ثبت‌نام موفق بود! اکنون می‌توانید وارد شوید.';
       successBox.classList.remove('hidden');
