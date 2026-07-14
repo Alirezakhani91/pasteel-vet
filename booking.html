@@ -263,30 +263,21 @@
 
     if (!selectedDate) return;
 
-    const weekday = new Date(selectedDate + 'T00:00:00').getDay();
-
-    // ۱) ساعات کاری هفتگی دکتر در همین روز هفته
-    const { data: availability } = await supabaseClient
-      .from('doctor_availability')
-      .select('start_time, end_time')
-      .eq('doctor_id', selectedDoctor.id)
-      .eq('weekday', weekday);
-
-    // ۲) تاریخ‌های خاصی که دکتر برای همین تاریخ دقیق اضافه کرده
+    // ساعت‌های کاری دکتر برای همین تاریخ دقیق (تنظیم‌شده توسط خودش)
     const { data: overrides } = await supabaseClient
       .from('doctor_date_overrides')
       .select('start_time, end_time')
       .eq('doctor_id', selectedDoctor.id)
       .eq('specific_date', selectedDate);
 
-    const allWindows = [...(availability || []), ...(overrides || [])];
+    const allWindows = overrides || [];
 
     if (allWindows.length === 0) {
-      slotsList.innerHTML = `<p class="text-sm text-ink/40 col-span-full">دامپزشک انتخابی روزهای ${JalaliUtil.weekdayFaFromIso(selectedDate)} نوبت‌دهی ندارد. روز دیگری را انتخاب کنید.</p>`;
+      slotsList.innerHTML = `<p class="text-sm text-ink/40 col-span-full">دامپزشک انتخابی برای تاریخ ${JalaliUtil.formatJalaliDisplay(selectedDate, true)} نوبت‌دهی تعریف نکرده است. تاریخ دیگری را انتخاب کنید.</p>`;
       return;
     }
 
-    // ۳) نوبت‌های از قبل رزروشده همین دامپزشک در همین تاریخ
+    // نوبت‌های از قبل رزروشده همین دامپزشک در همین تاریخ
     const { data: booked } = await supabaseClient
       .from('appointments')
       .select('appointment_time')
@@ -296,7 +287,7 @@
 
     const bookedTimes = new Set((booked || []).map(b => b.appointment_time?.slice(0, 5)));
 
-    // ۴) ساخت نوبت‌های نیم‌ساعته در همه‌ی بازه‌های کاری (هفتگی + استثناها)
+    // ساخت نوبت‌های نیم‌ساعته در بازه‌های کاری تعریف‌شده برای این تاریخ
     let slots = [];
     allWindows.forEach(win => {
       let start = timeToMinutes(win.start_time);
