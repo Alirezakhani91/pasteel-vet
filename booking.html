@@ -111,7 +111,8 @@
     <h2 class="text-lg font-bold text-forestDark mb-5">۳. انتخاب روز و ساعت</h2>
     <div class="mb-6">
       <label class="block text-sm font-bold text-forestDark mb-2">تاریخ مراجعه</label>
-      <input type="date" id="dateInput" class="w-full px-4 py-3 rounded-xl border border-ink/10 focus:border-forest focus:ring-2 focus:ring-forest/20 outline-none transition-all text-sm">
+      <input type="hidden" id="dateInput">
+      <div id="dateInputMount"></div>
     </div>
     <div id="slotsWrap" class="hidden">
       <label class="block text-sm font-bold text-forestDark mb-2">ساعت‌های نوبت‌دهی</label>
@@ -157,6 +158,7 @@
 </main>
 
 <script src="supabase-client.js"></script>
+<script src="jalali.js"></script>
 <script>
   let currentUser = null;
   let selectedService = null;
@@ -251,44 +253,58 @@
     return `${h}:${m}`;
   }
 
-  // ثابت: نوبت‌ها هر نیم‌ساعت از ۸ صبح تا ۲۴ (نیمه‌شب)
-  function buildFixedSlots() {
-    const slots = [];
-    let start = timeToMinutes('08:00');
-    const end = timeToMinutes('24:00'); // معادل 24*60 = 1440
-    while (start < end) {
-      slots.push(minutesToTime(start));
-      start += 30;
-    }
-    return slots;
-  }
-
   document.getElementById('dateInput').addEventListener('change', async (e) => {
     selectedDate = e.target.value;
     selectedTime = null;
     const slotsWrap = document.getElementById('slotsWrap');
     const slotsList = document.getElementById('slotsList');
     slotsWrap.classList.remove('hidden');
-    slotsList.innerHTML = '<p class="text-sm text-ink/40 col-span-full">در حال بررسی ساعت‌های رزروشده...</p>';
+    slotsList.innerHTML = '<p class="text-sm text-ink/40 col-span-full">در حال بررسی ساعت‌های نوبت‌دهی...</p>';
 
     if (!selectedDate) return;
 
-    // نوبت‌های از قبل رزروشده همین دامپزشک در همین تاریخ
-    const { data: booked, error } = await supabaseClient
+    const weekday = new Date(selectedDate + 'T00:00:00').getDay();
+
+    // ۱) ساعات کاری دکتر در همین روز هفته (تنظیم‌شده توسط خودش)
+    const { data: availability } = await supabaseClient
+      .from('doctor_availability')
+      .select('start_time, end_time')
+      .eq('doctor_id', selectedDoctor.id)
+      .eq('weekday', weekday);
+
+    if (!availability || availability.length === 0) {
+      slotsList.innerHTML = `<p class="text-sm text-ink/40 col-span-full">دامپزشک انتخابی روزهای ${JalaliUtil.weekdayFaFromIso(selectedDate)} نوبت‌دهی ندارد. روز دیگری را انتخاب کنید.</p>`;
+      return;
+    }
+
+    // ۲) نوبت‌های از قبل رزروشده همین دامپزشک در همین تاریخ
+    const { data: booked } = await supabaseClient
       .from('appointments')
       .select('appointment_time')
       .eq('doctor_id', selectedDoctor.id)
       .eq('appointment_date', selectedDate)
       .neq('status', 'cancelled');
 
-    if (error) {
-      console.error(error);
+    const bookedTimes = new Set((booked || []).map(b => b.appointment_time?.slice(0, 5)));
+
+    // ۳) ساخت نوبت‌های نیم‌ساعته در بازه‌های کاری دکتر
+    let slots = [];
+    availability.forEach(win => {
+      let start = timeToMinutes(win.start_time);
+      const end = timeToMinutes(win.end_time);
+      while (start + 30 <= end) {
+        slots.push(minutesToTime(start));
+        start += 30;
+      }
+    });
+    slots = [...new Set(slots)].sort();
+
+    if (slots.length === 0) {
+      slotsList.innerHTML = '<p class="text-sm text-ink/40 col-span-full">در این روز نوبت خالی وجود ندارد.</p>';
+      return;
     }
 
-    const bookedTimes = new Set((booked || []).map(b => b.appointment_time?.slice(0, 5)));
-    const allSlots = buildFixedSlots();
-
-    slotsList.innerHTML = allSlots.map(s => {
+    slotsList.innerHTML = slots.map(s => {
       const isBooked = bookedTimes.has(s);
       return `
         <button
@@ -319,7 +335,7 @@
     box.innerHTML = `
       <p><span class="text-ink/40">خدمت:</span> <span class="font-bold">${selectedService.title}</span></p>
       <p><span class="text-ink/40">دامپزشک:</span> <span class="font-bold">دکتر ${selectedDoctor.profiles?.full_name ?? ''}</span></p>
-      <p><span class="text-ink/40">تاریخ:</span> <span class="font-bold">${new Date(selectedDate + 'T00:00:00').toLocaleDateString('fa-IR', { year:'numeric', month:'long', day:'numeric' })}</span></p>
+      <p><span class="text-ink/40">تاریخ:</span> <span class="font-bold">${JalaliUtil.formatJalaliDisplay(selectedDate, true)}</span></p>
       <p><span class="text-ink/40">ساعت:</span> <span class="font-bold">${selectedTime}</span></p>
     `;
   }
@@ -373,9 +389,13 @@
     }
     currentUser = session.user;
 
-    // set min date to today
+    // راه‌اندازی تقویم شمسی برای انتخاب تاریخ
     const today = new Date().toISOString().split('T')[0];
-    document.getElementById('dateInput').min = today;
+    JalaliUtil.attachPicker(
+      document.getElementById('dateInput'),
+      document.getElementById('dateInputMount'),
+      { minDateISO: today }
+    );
 
     await Promise.all([loadServices(), loadDoctors()]);
 
