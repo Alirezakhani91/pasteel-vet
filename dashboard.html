@@ -346,7 +346,15 @@
       .eq('doctor_id', editingAppt.doctor_id)
       .eq('weekday', weekday);
 
-    if (!availability || availability.length === 0) {
+    const { data: overrides } = await supabaseClient
+      .from('doctor_date_overrides')
+      .select('start_time, end_time')
+      .eq('doctor_id', editingAppt.doctor_id)
+      .eq('specific_date', date);
+
+    const allWindows = [...(availability || []), ...(overrides || [])];
+
+    if (allWindows.length === 0) {
       slotsWrap.innerHTML = `<p class="text-xs text-ink/40 col-span-full">دامپزشک روزهای ${JalaliUtil.weekdayFaFromIso(date)} نوبت‌دهی ندارد.</p>`;
       return;
     }
@@ -362,7 +370,7 @@
     const bookedTimes = new Set((booked || []).map(b => b.appointment_time?.slice(0,5)));
 
     let allSlots = [];
-    availability.forEach(win => {
+    allWindows.forEach(win => {
       let start = timeToMinutes(win.start_time);
       const end = timeToMinutes(win.end_time);
       while (start + 30 <= end) {
