@@ -80,46 +80,25 @@
   <h1 class="text-2xl font-extrabold text-forestDark mb-1">مدیریت نوبت‌ها</h1>
   <p id="subtitle" class="text-sm text-ink/45 mb-8"></p>
 
-  <!-- ساعات کاری (فقط برای پزشک) -->
-  <section id="availabilitySection" class="hidden bg-white rounded-[2rem] border border-ink/[0.06] p-7 mb-10">
-    <h2 class="text-lg font-bold text-forestDark mb-1">ساعات کاری من</h2>
-    <p class="text-sm text-ink/45 mb-5">روزها و بازه‌ی ساعتی که برای بیماران نوبت‌دهی فعال دارید را مشخص کنید. تغییرات بلافاصله روی صفحه‌ی رزرو نوبت اعمال می‌شود.</p>
-    <div id="availabilityRows" class="space-y-3"></div>
-    <p id="availabilityError" class="hidden text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3 mt-4"></p>
-    <p id="availabilitySuccess" class="hidden text-sm text-forest bg-mist rounded-xl px-4 py-3 mt-4"></p>
-    <button id="saveAvailabilityBtn" class="mt-5 bg-forest hover:bg-forestDark text-white font-bold px-6 py-3 rounded-xl transition-all shadow-lg shadow-forest/25 text-sm">
-      ذخیره ساعات کاری
-    </button>
-  </section>
+  <!-- برنامه‌ی نوبت‌دهی (۴ هفته‌ی پیش رو، بر اساس تاریخ واقعی) -->
+  <section id="weekScheduleSection" class="hidden bg-white rounded-[2rem] border border-ink/[0.06] p-7 mb-10">
+    <h2 class="text-lg font-bold text-forestDark mb-1">برنامه‌ی نوبت‌دهی</h2>
+    <p class="text-sm text-ink/45 mb-5">برای هر روز، تاریخ دقیق آن را می‌بینید. تیک بزنید و ساعت کاری همان روز را مشخص کنید. با دکمه‌های زیر می‌توانید تا ۴ هفته‌ی آینده را جلو بروید. برای هر هفته جداگانه «ذخیره» بزنید.</p>
 
-  <!-- تاریخ‌های خاص (فقط برای پزشک) -->
-  <section id="overridesSection" class="hidden bg-white rounded-[2rem] border border-ink/[0.06] p-7 mb-10">
-    <h2 class="text-lg font-bold text-forestDark mb-1">تاریخ‌های خاص</h2>
-    <p class="text-sm text-ink/45 mb-5">اگر در یک تاریخ مشخص (خارج از برنامه‌ی هفتگی معمول‌تان) ساعت نوبت‌دهی اضافه دارید، اینجا اضافه کنید.</p>
-
-    <div class="flex flex-wrap items-end gap-3 mb-5">
-      <div class="flex-1 min-w-[160px]">
-        <label class="block text-xs font-bold text-forestDark mb-1.5">تاریخ</label>
-        <input type="hidden" id="overrideDate">
-        <div id="overrideDateMount"></div>
-      </div>
-      <div>
-        <label class="block text-xs font-bold text-forestDark mb-1.5">از ساعت</label>
-        <input type="time" id="overrideStart" value="09:00" class="px-3 py-2.5 rounded-lg border border-ink/10 text-sm">
-      </div>
-      <div>
-        <label class="block text-xs font-bold text-forestDark mb-1.5">تا ساعت</label>
-        <input type="time" id="overrideEnd" value="13:00" class="px-3 py-2.5 rounded-lg border border-ink/10 text-sm">
-      </div>
-      <button id="addOverrideBtn" class="bg-forest hover:bg-forestDark text-white font-bold px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-forest/25 text-sm">
-        افزودن
-      </button>
+    <div class="flex items-center justify-between mb-4">
+      <button id="prevWeekBtn" class="px-4 py-2 rounded-xl text-sm font-bold bg-mist text-ink/60 hover:bg-ink/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">هفته قبل</button>
+      <span id="weekLabel" class="text-sm font-bold text-forestDark"></span>
+      <button id="nextWeekBtn" class="px-4 py-2 rounded-xl text-sm font-bold bg-mist text-ink/60 hover:bg-ink/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">هفته بعد</button>
     </div>
 
-    <p id="overrideError" class="hidden text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3 mb-4"></p>
+    <div id="weekRows" class="space-y-3"></div>
 
-    <div id="overridesList" class="space-y-2"></div>
-    <p id="overridesEmpty" class="hidden text-sm text-ink/40">هنوز تاریخ خاصی اضافه نکرده‌اید.</p>
+    <p id="weekError" class="hidden text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3 mt-4"></p>
+    <p id="weekSuccess" class="hidden text-sm text-forest bg-mist rounded-xl px-4 py-3 mt-4"></p>
+
+    <button id="saveWeekBtn" class="mt-5 bg-forest hover:bg-forestDark text-white font-bold px-6 py-3 rounded-xl transition-all shadow-lg shadow-forest/25 text-sm">
+      ذخیره این هفته
+    </button>
   </section>
 
   <h2 class="text-lg font-bold text-forestDark mb-4">لیست نوبت‌ها</h2>
@@ -291,62 +270,90 @@
     renderList();
   }
 
-  // ---------------- ساعات کاری دکتر ----------------
-  const DAY_ORDER = [6, 0, 1, 2, 3, 4, 5]; // شنبه تا جمعه (بر اساس Date.getDay(): 0=یکشنبه...6=شنبه)
-  const DAY_LABELS = { 6: 'شنبه', 0: 'یکشنبه', 1: 'دوشنبه', 2: 'سه‌شنبه', 3: 'چهارشنبه', 4: 'پنجشنبه', 5: 'جمعه' };
+  // ---------------- برنامه‌ی نوبت‌دهی (۴ هفته‌ی واقعی پیش رو) ----------------
   let currentUserId = null;
+  let weekOffset = 0;
+  const MAX_WEEK_OFFSET = 3; // یعنی در مجموع ۴ هفته (هفته‌ی ۱ تا ۴)
 
-  async function loadAvailability() {
+  function getWeekDates(offset) {
+    const dates = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date();
+      d.setDate(d.getDate() + offset * 7 + i);
+      dates.push(d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'));
+    }
+    return dates;
+  }
+
+  async function renderWeek() {
+    const dates = getWeekDates(weekOffset);
+
+    document.getElementById('weekLabel').textContent =
+      `هفته ${JalaliUtil.toFaDigits(weekOffset + 1)} از ${JalaliUtil.toFaDigits(4)}`;
+    document.getElementById('prevWeekBtn').disabled = weekOffset === 0;
+    document.getElementById('nextWeekBtn').disabled = weekOffset === MAX_WEEK_OFFSET;
+    document.getElementById('weekError').classList.add('hidden');
+    document.getElementById('weekSuccess').classList.add('hidden');
+
     const { data: rows } = await supabaseClient
-      .from('doctor_availability')
-      .select('weekday, start_time, end_time')
-      .eq('doctor_id', currentUserId);
+      .from('doctor_date_overrides')
+      .select('specific_date, start_time, end_time')
+      .eq('doctor_id', currentUserId)
+      .in('specific_date', dates);
 
-    const existing = new Map((rows || []).map(r => [r.weekday, r]));
+    const existingMap = new Map((rows || []).map(r => [r.specific_date, r]));
 
-    const container = document.getElementById('availabilityRows');
-    container.innerHTML = DAY_ORDER.map(day => {
-      const row = existing.get(day);
+    const container = document.getElementById('weekRows');
+    container.innerHTML = dates.map(date => {
+      const row = existingMap.get(date);
       const checked = !!row;
       return `
-        <div class="flex items-center gap-3 flex-wrap" data-day="${day}">
-          <label class="flex items-center gap-2 w-24 shrink-0 cursor-pointer">
-            <input type="checkbox" class="avail-toggle w-4 h-4 accent-forest" ${checked ? 'checked' : ''}>
-            <span class="text-sm font-bold text-forestDark">${DAY_LABELS[day]}</span>
+        <div class="flex items-center gap-3 flex-wrap" data-date="${date}">
+          <label class="flex items-center gap-2 w-48 shrink-0 cursor-pointer">
+            <input type="checkbox" class="week-toggle w-4 h-4 accent-forest" ${checked ? 'checked' : ''}>
+            <span class="text-sm font-bold text-forestDark">${JalaliUtil.formatJalaliDisplay(date, true)}</span>
           </label>
-          <input type="time" class="avail-start px-3 py-2 rounded-lg border border-ink/10 text-sm" value="${row?.start_time?.slice(0,5) || '09:00'}" ${checked ? '' : 'disabled'}>
+          <input type="time" class="week-start px-3 py-2 rounded-lg border border-ink/10 text-sm" value="${row?.start_time?.slice(0,5) || '09:00'}" ${checked ? '' : 'disabled'}>
           <span class="text-ink/30 text-sm">تا</span>
-          <input type="time" class="avail-end px-3 py-2 rounded-lg border border-ink/10 text-sm" value="${row?.end_time?.slice(0,5) || '17:00'}" ${checked ? '' : 'disabled'}>
+          <input type="time" class="week-end px-3 py-2 rounded-lg border border-ink/10 text-sm" value="${row?.end_time?.slice(0,5) || '17:00'}" ${checked ? '' : 'disabled'}>
         </div>
       `;
     }).join('');
 
-    container.querySelectorAll('.avail-toggle').forEach(cb => {
+    container.querySelectorAll('.week-toggle').forEach(cb => {
       cb.addEventListener('change', () => {
-        const row = cb.closest('[data-day]');
-        row.querySelector('.avail-start').disabled = !cb.checked;
-        row.querySelector('.avail-end').disabled = !cb.checked;
+        const row = cb.closest('[data-date]');
+        row.querySelector('.week-start').disabled = !cb.checked;
+        row.querySelector('.week-end').disabled = !cb.checked;
       });
     });
   }
 
-  document.getElementById('saveAvailabilityBtn').addEventListener('click', async () => {
-    const errorBox = document.getElementById('availabilityError');
-    const successBox = document.getElementById('availabilitySuccess');
+  document.getElementById('prevWeekBtn').addEventListener('click', () => {
+    if (weekOffset > 0) { weekOffset -= 1; renderWeek(); }
+  });
+  document.getElementById('nextWeekBtn').addEventListener('click', () => {
+    if (weekOffset < MAX_WEEK_OFFSET) { weekOffset += 1; renderWeek(); }
+  });
+
+  document.getElementById('saveWeekBtn').addEventListener('click', async () => {
+    const errorBox = document.getElementById('weekError');
+    const successBox = document.getElementById('weekSuccess');
     errorBox.classList.add('hidden');
     successBox.classList.add('hidden');
 
-    const rows = [];
+    const dates = getWeekDates(weekOffset);
+    const rowsToInsert = [];
     let hasError = false;
 
-    document.querySelectorAll('#availabilityRows [data-day]').forEach(rowEl => {
-      const day = parseInt(rowEl.dataset.day);
-      const checked = rowEl.querySelector('.avail-toggle').checked;
+    document.querySelectorAll('#weekRows [data-date]').forEach(rowEl => {
+      const date = rowEl.dataset.date;
+      const checked = rowEl.querySelector('.week-toggle').checked;
       if (!checked) return;
-      const start = rowEl.querySelector('.avail-start').value;
-      const end = rowEl.querySelector('.avail-end').value;
+      const start = rowEl.querySelector('.week-start').value;
+      const end = rowEl.querySelector('.week-end').value;
       if (!start || !end || start >= end) { hasError = true; return; }
-      rows.push({ doctor_id: currentUserId, weekday: day, start_time: start, end_time: end });
+      rowsToInsert.push({ doctor_id: currentUserId, specific_date: date, start_time: start, end_time: end });
     });
 
     if (hasError) {
@@ -355,107 +362,34 @@
       return;
     }
 
-    const btn = document.getElementById('saveAvailabilityBtn');
+    const btn = document.getElementById('saveWeekBtn');
     btn.disabled = true;
     btn.textContent = 'در حال ذخیره...';
 
-    await supabaseClient.from('doctor_availability').delete().eq('doctor_id', currentUserId);
+    await supabaseClient
+      .from('doctor_date_overrides')
+      .delete()
+      .eq('doctor_id', currentUserId)
+      .in('specific_date', dates);
 
     let insertError = null;
-    if (rows.length > 0) {
-      const { error } = await supabaseClient.from('doctor_availability').insert(rows);
+    if (rowsToInsert.length > 0) {
+      const { error } = await supabaseClient.from('doctor_date_overrides').insert(rowsToInsert);
       insertError = error;
     }
 
     btn.disabled = false;
-    btn.textContent = 'ذخیره ساعات کاری';
+    btn.textContent = 'ذخیره این هفته';
 
     if (insertError) {
       console.error(insertError);
-      errorBox.textContent = 'خطا در ذخیره ساعات کاری. لطفاً دوباره تلاش کنید.';
+      errorBox.textContent = 'خطا در ذخیره برنامه. لطفاً دوباره تلاش کنید.';
       errorBox.classList.remove('hidden');
       return;
     }
 
-    successBox.textContent = 'ساعات کاری با موفقیت ذخیره شد.';
+    successBox.textContent = 'برنامه‌ی این هفته با موفقیت ذخیره شد.';
     successBox.classList.remove('hidden');
-  });
-
-  // ---------------- تاریخ‌های خاص (استثناهای برنامه‌ی هفتگی) ----------------
-  async function loadOverrides() {
-    const { data: rows, error } = await supabaseClient
-      .from('doctor_date_overrides')
-      .select('id, specific_date, start_time, end_time')
-      .eq('doctor_id', currentUserId)
-      .order('specific_date', { ascending: true });
-
-    const list = document.getElementById('overridesList');
-    const empty = document.getElementById('overridesEmpty');
-
-    if (error || !rows || rows.length === 0) {
-      list.innerHTML = '';
-      empty.classList.remove('hidden');
-      return;
-    }
-    empty.classList.add('hidden');
-
-    list.innerHTML = rows.map(r => `
-      <div class="flex items-center justify-between bg-mist rounded-xl px-4 py-3">
-        <span class="text-sm text-forestDark font-bold">${JalaliUtil.formatJalaliDisplay(r.specific_date, true)}</span>
-        <span class="text-sm text-ink/60">${r.start_time.slice(0,5)} تا ${r.end_time.slice(0,5)}</span>
-        <button data-id="${r.id}" class="remove-override-btn text-xs font-bold text-red-600 hover:text-red-700 transition-colors">حذف</button>
-      </div>
-    `).join('');
-
-    list.querySelectorAll('.remove-override-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        await supabaseClient.from('doctor_date_overrides').delete().eq('id', btn.dataset.id);
-        loadOverrides();
-      });
-    });
-  }
-
-  document.getElementById('addOverrideBtn').addEventListener('click', async () => {
-    const errorBox = document.getElementById('overrideError');
-    errorBox.classList.add('hidden');
-
-    const date = document.getElementById('overrideDate').value;
-    const start = document.getElementById('overrideStart').value;
-    const end = document.getElementById('overrideEnd').value;
-
-    if (!date) {
-      errorBox.textContent = 'لطفاً یک تاریخ انتخاب کنید.';
-      errorBox.classList.remove('hidden');
-      return;
-    }
-    if (!start || !end || start >= end) {
-      errorBox.textContent = 'ساعت شروع باید قبل از ساعت پایان باشد.';
-      errorBox.classList.remove('hidden');
-      return;
-    }
-
-    const btn = document.getElementById('addOverrideBtn');
-    btn.disabled = true;
-    btn.textContent = 'در حال افزودن...';
-
-    const { error } = await supabaseClient.from('doctor_date_overrides').insert({
-      doctor_id: currentUserId,
-      specific_date: date,
-      start_time: start,
-      end_time: end,
-    });
-
-    btn.disabled = false;
-    btn.textContent = 'افزودن';
-
-    if (error) {
-      console.error(error);
-      errorBox.textContent = 'خطا در افزودن تاریخ خاص.';
-      errorBox.classList.remove('hidden');
-      return;
-    }
-
-    loadOverrides();
   });
 
   async function init() {
@@ -489,17 +423,8 @@
       : 'مشاهده و مدیریت نوبت‌های مربوط به شما';
 
     if (myRole === 'doctor') {
-      document.getElementById('availabilitySection').classList.remove('hidden');
-      await loadAvailability();
-
-      document.getElementById('overridesSection').classList.remove('hidden');
-      const today = new Date().toISOString().split('T')[0];
-      JalaliUtil.attachPicker(
-        document.getElementById('overrideDate'),
-        document.getElementById('overrideDateMount'),
-        { minDateISO: today }
-      );
-      await loadOverrides();
+      document.getElementById('weekScheduleSection').classList.remove('hidden');
+      await renderWeek();
     }
 
     document.getElementById('pageContent').classList.remove('hidden');
