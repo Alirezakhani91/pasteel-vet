@@ -475,6 +475,7 @@ async function loadDoctors() {
       id,
       specialty,
       bio,
+      photo_url,
       profiles ( full_name ),
       doctor_services ( services ( title ) )
     `);
@@ -497,17 +498,67 @@ async function loadDoctors() {
       .map(ds => ds.services?.title)
       .filter(Boolean);
 
+    const photoMarkup = doc.photo_url
+      ? `
+        <div class="relative w-28 h-28 mx-auto">
+          <img
+            src="${doc.photo_url}"
+            alt="عکس ${name}"
+            loading="lazy"
+            class="w-28 h-28 rounded-full object-cover border-4 border-mist shadow-sm"
+            onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');"
+          >
+          <div class="hidden w-28 h-28 rounded-full bg-mist items-center justify-center text-2xl font-extrabold text-forest">
+            ${initials}
+          </div>
+        </div>
+      `
+      : `
+        <div class="w-28 h-28 mx-auto rounded-full bg-mist flex items-center justify-center text-2xl font-extrabold text-forest">
+          ${initials}
+        </div>
+      `;
+
     return `
-      <div class="reveal bg-white rounded-3xl border border-ink/[0.06] p-6 text-center hover:shadow-lg hover:shadow-forest/[0.06] transition-shadow">
-        <div class="w-20 h-20 mx-auto rounded-full bg-mist flex items-center justify-center text-2xl font-extrabold text-forest">${initials}</div>
-        <h3 class="mt-4 font-bold text-forestDark">${name}</h3>
-        <p class="text-xs text-ink/50 mt-1">${doc.specialty ?? ''}</p>
+      <article class="reveal bg-white rounded-3xl border border-ink/[0.06] p-6 text-center hover:border-forest/20 hover:shadow-xl hover:shadow-forest/[0.08] transition-all flex flex-col">
+        ${photoMarkup}
+
+        <h3 class="mt-5 text-lg font-extrabold text-forestDark">${name}</h3>
+
+        <p class="text-sm font-bold text-forest mt-1">
+          ${doc.specialty || 'دامپزشک نیک‌پلاس'}
+        </p>
+
+        ${doc.bio ? `
+          <p class="text-sm text-ink/55 leading-7 mt-4">
+            ${doc.bio}
+          </p>
+        ` : `
+          <p class="text-sm text-ink/40 leading-7 mt-4">
+            اطلاعات تکمیلی این دامپزشک به‌زودی ثبت می‌شود.
+          </p>
+        `}
+
         ${serviceTags.length ? `
-          <div class="mt-3 flex flex-wrap justify-center gap-1.5">
-            ${serviceTags.map(t => `<span class="text-[11px] font-bold text-forest bg-mist px-2.5 py-1 rounded-full">${t}</span>`).join('')}
+          <div class="mt-4 pt-4 border-t border-ink/[0.06]">
+            <p class="text-[11px] text-ink/35 font-bold mb-2">خدمات قابل ارائه</p>
+            <div class="flex flex-wrap justify-center gap-1.5">
+              ${serviceTags.map(t => `
+                <span class="text-[11px] font-bold text-forest bg-mist px-2.5 py-1 rounded-full">
+                  ${t}
+                </span>
+              `).join('')}
+            </div>
           </div>
         ` : ''}
-      </div>
+
+        <a
+          href="auth.html"
+          class="booking-cta mt-5 inline-flex items-center justify-center gap-2 bg-forest hover:bg-forestDark text-white text-sm font-bold px-5 py-3 rounded-xl transition-all"
+        >
+          دریافت نوبت با این پزشک
+        </a>
+      </article>
     `;
   }).join('');
 }
@@ -597,7 +648,7 @@ async function loadServices() {
 
     const { data: rows, error } = await supabaseClient
       .from('doctor_services')
-      .select('doctors ( specialty, profiles ( full_name ) )')
+      .select('doctors ( specialty, photo_url, profiles ( full_name ) )')
       .eq('service_id', serviceId);
 
     if (error || !rows || rows.length === 0) {
@@ -606,12 +657,41 @@ async function loadServices() {
       return;
     }
 
-    panel.innerHTML = rows.map(r => `
-      <div class="bg-mist rounded-xl px-3.5 py-2.5">
-        <p class="text-xs font-bold text-forestDark">${formatDoctorName(r.doctors?.profiles?.full_name)}</p>
-        ${r.doctors?.specialty ? `<p class="text-[11px] text-ink/45 mt-0.5">${r.doctors.specialty}</p>` : ''}
-      </div>
-    `).join('');
+    panel.innerHTML = rows.map(r => {
+      const doctorName = formatDoctorName(r.doctors?.profiles?.full_name);
+      const initials = getDoctorInitials(r.doctors?.profiles?.full_name);
+
+      const smallPhoto = r.doctors?.photo_url
+        ? `
+          <img
+            src="${r.doctors.photo_url}"
+            alt="عکس ${doctorName}"
+            loading="lazy"
+            class="w-11 h-11 rounded-full object-cover border-2 border-white shadow-sm shrink-0"
+            onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');"
+          >
+          <div class="hidden w-11 h-11 rounded-full bg-white items-center justify-center text-xs font-extrabold text-forest shrink-0">
+            ${initials}
+          </div>
+        `
+        : `
+          <div class="w-11 h-11 rounded-full bg-white flex items-center justify-center text-xs font-extrabold text-forest shrink-0">
+            ${initials}
+          </div>
+        `;
+
+      return `
+        <div class="bg-mist rounded-xl px-3.5 py-3 flex items-center gap-3">
+          ${smallPhoto}
+          <div class="min-w-0 text-right">
+            <p class="text-xs font-bold text-forestDark">${doctorName}</p>
+            ${r.doctors?.specialty
+              ? `<p class="text-[11px] text-ink/45 mt-0.5">${r.doctors.specialty}</p>`
+              : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
     panel.dataset.loaded = 'true';
   }
 
