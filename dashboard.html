@@ -114,7 +114,8 @@
     <div class="space-y-4">
       <div>
         <label class="block text-sm font-bold text-forestDark mb-1.5">تاریخ جدید</label>
-        <input type="date" id="editDate" class="w-full px-4 py-3 rounded-xl border border-ink/10 focus:border-forest focus:ring-2 focus:ring-forest/20 outline-none transition-all text-sm">
+        <input type="hidden" id="editDate">
+        <div id="editDateMount"></div>
       </div>
       <div>
         <label class="block text-sm font-bold text-forestDark mb-2">ساعت جدید</label>
@@ -139,6 +140,7 @@
 </div>
 
 <script src="supabase-client.js"></script>
+<script src="jalali.js"></script>
 <script>
   let currentAppointments = [];
 
@@ -150,9 +152,7 @@
   };
 
   function formatDate(dateStr) {
-    try {
-      return new Date(dateStr).toLocaleDateString('fa-IR', { year: 'numeric', month: 'long', day: 'numeric' });
-    } catch { return dateStr; }
+    return JalaliUtil.formatJalaliDisplay(dateStr, true);
   }
 
   function actionButtons(appt) {
@@ -220,8 +220,6 @@
     }
 
     const user = session.user;
-
-    document.getElementById('editDate').min = new Date().toISOString().split('T')[0];
 
     // 2) load profile name
     const { data: profile } = await supabaseClient
@@ -299,16 +297,6 @@
     const m = (mins % 60).toString().padStart(2, '0');
     return `${h}:${m}`;
   }
-  function buildFixedSlots() {
-    const slots = [];
-    let start = timeToMinutes('08:00');
-    const end = timeToMinutes('24:00');
-    while (start < end) {
-      slots.push(minutesToTime(start));
-      start += 30;
-    }
-    return slots;
-  }
 
   function openEditModal(id) {
     editingAppt = currentAppointments.find(a => a.id == id);
@@ -319,6 +307,13 @@
     document.getElementById('editNotes').value = editingAppt.notes || '';
     document.getElementById('editError').classList.add('hidden');
     document.getElementById('editModal').classList.remove('hidden');
+
+    const today = new Date().toISOString().split('T')[0];
+    JalaliUtil.attachPicker(
+      document.getElementById('editDate'),
+      document.getElementById('editDateMount'),
+      { minDateISO: today }
+    );
 
     loadEditSlots(editingAppt.appointment_date, editingAppt.appointment_time?.slice(0,5));
   }
@@ -339,9 +334,22 @@
   async function loadEditSlots(date, preselectTime) {
     const slotsWrap = document.getElementById('editSlots');
     selectedEditTime = preselectTime || null;
-    slotsWrap.innerHTML = '<p class="text-xs text-ink/40 col-span-full">در حال بررسی ساعت‌های رزروشده...</p>';
+    slotsWrap.innerHTML = '<p class="text-xs text-ink/40 col-span-full">در حال بررسی ساعت‌های نوبت‌دهی...</p>';
 
     if (!date) { slotsWrap.innerHTML = ''; return; }
+
+    const weekday = new Date(date + 'T00:00:00').getDay();
+
+    const { data: availability } = await supabaseClient
+      .from('doctor_availability')
+      .select('start_time, end_time')
+      .eq('doctor_id', editingAppt.doctor_id)
+      .eq('weekday', weekday);
+
+    if (!availability || availability.length === 0) {
+      slotsWrap.innerHTML = `<p class="text-xs text-ink/40 col-span-full">دامپزشک روزهای ${JalaliUtil.weekdayFaFromIso(date)} نوبت‌دهی ندارد.</p>`;
+      return;
+    }
 
     const { data: booked } = await supabaseClient
       .from('appointments')
@@ -352,7 +360,22 @@
       .neq('id', editingAppt.id);
 
     const bookedTimes = new Set((booked || []).map(b => b.appointment_time?.slice(0,5)));
-    const allSlots = buildFixedSlots();
+
+    let allSlots = [];
+    availability.forEach(win => {
+      let start = timeToMinutes(win.start_time);
+      const end = timeToMinutes(win.end_time);
+      while (start + 30 <= end) {
+        allSlots.push(minutesToTime(start));
+        start += 30;
+      }
+    });
+    allSlots = [...new Set(allSlots)].sort();
+
+    if (allSlots.length === 0) {
+      slotsWrap.innerHTML = '<p class="text-xs text-ink/40 col-span-full">در این روز نوبت خالی وجود ندارد.</p>';
+      return;
+    }
 
     slotsWrap.innerHTML = allSlots.map(s => {
       const isBooked = bookedTimes.has(s);
