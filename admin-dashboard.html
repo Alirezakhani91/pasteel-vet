@@ -92,6 +92,36 @@
     </button>
   </section>
 
+  <!-- تاریخ‌های خاص (فقط برای پزشک) -->
+  <section id="overridesSection" class="hidden bg-white rounded-[2rem] border border-ink/[0.06] p-7 mb-10">
+    <h2 class="text-lg font-bold text-forestDark mb-1">تاریخ‌های خاص</h2>
+    <p class="text-sm text-ink/45 mb-5">اگر در یک تاریخ مشخص (خارج از برنامه‌ی هفتگی معمول‌تان) ساعت نوبت‌دهی اضافه دارید، اینجا اضافه کنید.</p>
+
+    <div class="flex flex-wrap items-end gap-3 mb-5">
+      <div class="flex-1 min-w-[160px]">
+        <label class="block text-xs font-bold text-forestDark mb-1.5">تاریخ</label>
+        <input type="hidden" id="overrideDate">
+        <div id="overrideDateMount"></div>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-forestDark mb-1.5">از ساعت</label>
+        <input type="time" id="overrideStart" value="09:00" class="px-3 py-2.5 rounded-lg border border-ink/10 text-sm">
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-forestDark mb-1.5">تا ساعت</label>
+        <input type="time" id="overrideEnd" value="13:00" class="px-3 py-2.5 rounded-lg border border-ink/10 text-sm">
+      </div>
+      <button id="addOverrideBtn" class="bg-forest hover:bg-forestDark text-white font-bold px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-forest/25 text-sm">
+        افزودن
+      </button>
+    </div>
+
+    <p id="overrideError" class="hidden text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3 mb-4"></p>
+
+    <div id="overridesList" class="space-y-2"></div>
+    <p id="overridesEmpty" class="hidden text-sm text-ink/40">هنوز تاریخ خاصی اضافه نکرده‌اید.</p>
+  </section>
+
   <h2 class="text-lg font-bold text-forestDark mb-4">لیست نوبت‌ها</h2>
 
   <!-- filter tabs -->
@@ -351,6 +381,83 @@
     successBox.classList.remove('hidden');
   });
 
+  // ---------------- تاریخ‌های خاص (استثناهای برنامه‌ی هفتگی) ----------------
+  async function loadOverrides() {
+    const { data: rows, error } = await supabaseClient
+      .from('doctor_date_overrides')
+      .select('id, specific_date, start_time, end_time')
+      .eq('doctor_id', currentUserId)
+      .order('specific_date', { ascending: true });
+
+    const list = document.getElementById('overridesList');
+    const empty = document.getElementById('overridesEmpty');
+
+    if (error || !rows || rows.length === 0) {
+      list.innerHTML = '';
+      empty.classList.remove('hidden');
+      return;
+    }
+    empty.classList.add('hidden');
+
+    list.innerHTML = rows.map(r => `
+      <div class="flex items-center justify-between bg-mist rounded-xl px-4 py-3">
+        <span class="text-sm text-forestDark font-bold">${JalaliUtil.formatJalaliDisplay(r.specific_date, true)}</span>
+        <span class="text-sm text-ink/60">${r.start_time.slice(0,5)} تا ${r.end_time.slice(0,5)}</span>
+        <button data-id="${r.id}" class="remove-override-btn text-xs font-bold text-red-600 hover:text-red-700 transition-colors">حذف</button>
+      </div>
+    `).join('');
+
+    list.querySelectorAll('.remove-override-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        await supabaseClient.from('doctor_date_overrides').delete().eq('id', btn.dataset.id);
+        loadOverrides();
+      });
+    });
+  }
+
+  document.getElementById('addOverrideBtn').addEventListener('click', async () => {
+    const errorBox = document.getElementById('overrideError');
+    errorBox.classList.add('hidden');
+
+    const date = document.getElementById('overrideDate').value;
+    const start = document.getElementById('overrideStart').value;
+    const end = document.getElementById('overrideEnd').value;
+
+    if (!date) {
+      errorBox.textContent = 'لطفاً یک تاریخ انتخاب کنید.';
+      errorBox.classList.remove('hidden');
+      return;
+    }
+    if (!start || !end || start >= end) {
+      errorBox.textContent = 'ساعت شروع باید قبل از ساعت پایان باشد.';
+      errorBox.classList.remove('hidden');
+      return;
+    }
+
+    const btn = document.getElementById('addOverrideBtn');
+    btn.disabled = true;
+    btn.textContent = 'در حال افزودن...';
+
+    const { error } = await supabaseClient.from('doctor_date_overrides').insert({
+      doctor_id: currentUserId,
+      specific_date: date,
+      start_time: start,
+      end_time: end,
+    });
+
+    btn.disabled = false;
+    btn.textContent = 'افزودن';
+
+    if (error) {
+      console.error(error);
+      errorBox.textContent = 'خطا در افزودن تاریخ خاص.';
+      errorBox.classList.remove('hidden');
+      return;
+    }
+
+    loadOverrides();
+  });
+
   async function init() {
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (!session) {
@@ -384,6 +491,15 @@
     if (myRole === 'doctor') {
       document.getElementById('availabilitySection').classList.remove('hidden');
       await loadAvailability();
+
+      document.getElementById('overridesSection').classList.remove('hidden');
+      const today = new Date().toISOString().split('T')[0];
+      JalaliUtil.attachPicker(
+        document.getElementById('overrideDate'),
+        document.getElementById('overrideDateMount'),
+        { minDateISO: today }
+      );
+      await loadOverrides();
     }
 
     document.getElementById('pageContent').classList.remove('hidden');
