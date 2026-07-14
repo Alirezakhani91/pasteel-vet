@@ -338,24 +338,16 @@
 
     if (!date) { slotsWrap.innerHTML = ''; return; }
 
-    const weekday = new Date(date + 'T00:00:00').getDay();
-
-    const { data: availability } = await supabaseClient
-      .from('doctor_availability')
-      .select('start_time, end_time')
-      .eq('doctor_id', editingAppt.doctor_id)
-      .eq('weekday', weekday);
-
     const { data: overrides } = await supabaseClient
       .from('doctor_date_overrides')
       .select('start_time, end_time')
       .eq('doctor_id', editingAppt.doctor_id)
       .eq('specific_date', date);
 
-    const allWindows = [...(availability || []), ...(overrides || [])];
+    const allWindows = overrides || [];
 
     if (allWindows.length === 0) {
-      slotsWrap.innerHTML = `<p class="text-xs text-ink/40 col-span-full">دامپزشک روزهای ${JalaliUtil.weekdayFaFromIso(date)} نوبت‌دهی ندارد.</p>`;
+      slotsWrap.innerHTML = `<p class="text-xs text-ink/40 col-span-full">دامپزشک برای تاریخ ${JalaliUtil.formatJalaliDisplay(date, true)} نوبت‌دهی تعریف نکرده است.</p>`;
       return;
     }
 
