@@ -285,27 +285,8 @@
     <h2 class="text-3xl sm:text-4xl font-extrabold text-forestDark leading-tight">دامپزشکان نیک‌پلاس</h2>
   </div>
 
-  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-    <div class="reveal bg-white rounded-3xl border border-ink/[0.06] p-6 text-center hover:shadow-lg hover:shadow-forest/[0.06] transition-shadow">
-      <div class="w-20 h-20 mx-auto rounded-full bg-mist flex items-center justify-center text-2xl font-extrabold text-forest">م.ا</div>
-      <h3 class="mt-4 font-bold text-forestDark">دکتر مریم احمدی</h3>
-      <p class="text-xs text-ink/50 mt-1">دامپزشک عمومی و پوست</p>
-    </div>
-    <div class="reveal bg-white rounded-3xl border border-ink/[0.06] p-6 text-center hover:shadow-lg hover:shadow-forest/[0.06] transition-shadow">
-      <div class="w-20 h-20 mx-auto rounded-full bg-mist flex items-center justify-center text-2xl font-extrabold text-forest">ع.ر</div>
-      <h3 class="mt-4 font-bold text-forestDark">دکتر علی رضایی</h3>
-      <p class="text-xs text-ink/50 mt-1">جراح ارتوپد دامپزشکی</p>
-    </div>
-    <div class="reveal bg-white rounded-3xl border border-ink/[0.06] p-6 text-center hover:shadow-lg hover:shadow-forest/[0.06] transition-shadow">
-      <div class="w-20 h-20 mx-auto rounded-full bg-mist flex items-center justify-center text-2xl font-extrabold text-forest">س.ک</div>
-      <h3 class="mt-4 font-bold text-forestDark">دکتر سارا کریمی</h3>
-      <p class="text-xs text-ink/50 mt-1">متخصص تغذیه و داخلی</p>
-    </div>
-    <div class="reveal bg-white rounded-3xl border border-ink/[0.06] p-6 text-center hover:shadow-lg hover:shadow-forest/[0.06] transition-shadow">
-      <div class="w-20 h-20 mx-auto rounded-full bg-mist flex items-center justify-center text-2xl font-extrabold text-forest">ح.م</div>
-      <h3 class="mt-4 font-bold text-forestDark">دکتر حسین مرادی</h3>
-      <p class="text-xs text-ink/50 mt-1">رادیولوژی و سونوگرافی</p>
-    </div>
+  <div id="doctorsContainer" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+    <p class="col-span-full text-center text-ink/40">در حال بارگذاری دامپزشکان...</p>
   </div>
 </section>
 
@@ -469,7 +450,69 @@
 
 <script src="supabase-client.js"></script>
 <script>
-  async function loadServices() {
+  // اگر توی full_name خود دکتر از قبل کلمه‌ی «دکتر» اضافه شده باشد، حذفش می‌کند
+// تا وقتی کد خودش پیشوند «دکتر» را اضافه می‌کند، به‌صورت «دکتر دکتر ...» تکراری نشود
+function formatDoctorName(fullName) {
+  const clean = (fullName || '').trim().replace(/^دکتر\s+/, '');
+  return clean ? 'دکتر ' + clean : 'دکتر';
+}
+
+// حروف اول نام و نام خانوادگی برای آواتار (بدون پیشوند «دکتر»)
+function getDoctorInitials(fullName) {
+  const clean = (fullName || '').trim().replace(/^دکتر\s+/, '');
+  const parts = clean.split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) return parts[0][0] + '.' + parts[1][0];
+  if (parts.length === 1) return parts[0][0];
+  return '؟';
+}
+
+async function loadDoctors() {
+  const container = document.getElementById('doctorsContainer');
+
+  const { data: doctors, error } = await supabaseClient
+    .from('doctors')
+    .select(`
+      id,
+      specialty,
+      bio,
+      profiles ( full_name ),
+      doctor_services ( services ( title ) )
+    `);
+
+  if (error) {
+    container.innerHTML = `<p class="col-span-full text-center text-red-500">خطا در بارگذاری دامپزشکان</p>`;
+    console.error(error);
+    return;
+  }
+
+  if (!doctors || doctors.length === 0) {
+    container.innerHTML = `<p class="col-span-full text-center text-ink/40">در حال حاضر دامپزشکی ثبت نشده است.</p>`;
+    return;
+  }
+
+  container.innerHTML = doctors.map(doc => {
+    const name = formatDoctorName(doc.profiles?.full_name);
+    const initials = getDoctorInitials(doc.profiles?.full_name);
+    const serviceTags = (doc.doctor_services || [])
+      .map(ds => ds.services?.title)
+      .filter(Boolean);
+
+    return `
+      <div class="reveal bg-white rounded-3xl border border-ink/[0.06] p-6 text-center hover:shadow-lg hover:shadow-forest/[0.06] transition-shadow">
+        <div class="w-20 h-20 mx-auto rounded-full bg-mist flex items-center justify-center text-2xl font-extrabold text-forest">${initials}</div>
+        <h3 class="mt-4 font-bold text-forestDark">${name}</h3>
+        <p class="text-xs text-ink/50 mt-1">${doc.specialty ?? ''}</p>
+        ${serviceTags.length ? `
+          <div class="mt-3 flex flex-wrap justify-center gap-1.5">
+            ${serviceTags.map(t => `<span class="text-[11px] font-bold text-forest bg-mist px-2.5 py-1 rounded-full">${t}</span>`).join('')}
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+async function loadServices() {
     const container = document.getElementById('servicesContainer');
 
     const { data: services, error } = await supabaseClient
@@ -565,7 +608,7 @@
 
     panel.innerHTML = rows.map(r => `
       <div class="bg-mist rounded-xl px-3.5 py-2.5">
-        <p class="text-xs font-bold text-forestDark">دکتر ${r.doctors?.profiles?.full_name ?? ''}</p>
+        <p class="text-xs font-bold text-forestDark">${formatDoctorName(r.doctors?.profiles?.full_name)}</p>
         ${r.doctors?.specialty ? `<p class="text-[11px] text-ink/45 mt-0.5">${r.doctors.specialty}</p>` : ''}
       </div>
     `).join('');
@@ -582,6 +625,7 @@
 
   (async function () {
     await loadServices();
+    await loadDoctors();
     await setupBookingLinks();
   })();
 </script>
