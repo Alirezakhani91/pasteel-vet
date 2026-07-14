@@ -80,6 +80,18 @@
   <h1 class="text-2xl font-extrabold text-forestDark mb-1">مدیریت نوبت‌ها</h1>
   <p id="subtitle" class="text-sm text-ink/45 mb-8"></p>
 
+  <!-- خدماتی که ارائه می‌دهم (فقط برای پزشک) -->
+  <section id="myServicesSection" class="hidden bg-white rounded-[2rem] border border-ink/[0.06] p-7 mb-10">
+    <h2 class="text-lg font-bold text-forestDark mb-1">خدماتی که ارائه می‌دهم</h2>
+    <p class="text-sm text-ink/45 mb-5">خدماتی را که انجام می‌دهید تیک بزنید تا در صفحه‌ی اول، زیر همان خدمت به بیماران نمایش داده شوید.</p>
+    <div id="myServicesRows" class="space-y-2.5"></div>
+    <p id="myServicesError" class="hidden text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3 mt-4"></p>
+    <p id="myServicesSuccess" class="hidden text-sm text-forest bg-mist rounded-xl px-4 py-3 mt-4"></p>
+    <button id="saveMyServicesBtn" class="mt-5 bg-forest hover:bg-forestDark text-white font-bold px-6 py-3 rounded-xl transition-all shadow-lg shadow-forest/25 text-sm">
+      ذخیره خدمات
+    </button>
+  </section>
+
   <!-- برنامه‌ی نوبت‌دهی (۴ هفته‌ی پیش رو، بر اساس تاریخ واقعی) -->
   <section id="weekScheduleSection" class="hidden bg-white rounded-[2rem] border border-ink/[0.06] p-7 mb-10">
     <h2 class="text-lg font-bold text-forestDark mb-1">برنامه‌ی نوبت‌دهی</h2>
@@ -270,6 +282,65 @@
     renderList();
   }
 
+  // ---------------- خدماتی که ارائه می‌دهم ----------------
+  async function loadMyServices() {
+    const [{ data: allServices }, { data: myLinks }] = await Promise.all([
+      supabaseClient.from('services').select('id, title').order('created_at', { ascending: true }),
+      supabaseClient.from('doctor_services').select('service_id').eq('doctor_id', currentUserId),
+    ]);
+
+    const mySet = new Set((myLinks || []).map(r => r.service_id));
+
+    const container = document.getElementById('myServicesRows');
+    if (!allServices || allServices.length === 0) {
+      container.innerHTML = `<p class="text-sm text-ink/40">هنوز خدمتی در سامانه ثبت نشده است.</p>`;
+      return;
+    }
+
+    container.innerHTML = allServices.map(s => `
+      <label class="flex items-center gap-2.5 cursor-pointer">
+        <input type="checkbox" class="my-service-toggle w-4 h-4 accent-forest" data-service-id="${s.id}" ${mySet.has(s.id) ? 'checked' : ''}>
+        <span class="text-sm text-forestDark font-bold">${s.title}</span>
+      </label>
+    `).join('');
+  }
+
+  document.getElementById('saveMyServicesBtn').addEventListener('click', async () => {
+    const errorBox = document.getElementById('myServicesError');
+    const successBox = document.getElementById('myServicesSuccess');
+    errorBox.classList.add('hidden');
+    successBox.classList.add('hidden');
+
+    const selectedIds = [...document.querySelectorAll('.my-service-toggle:checked')].map(cb => cb.dataset.serviceId);
+
+    const btn = document.getElementById('saveMyServicesBtn');
+    btn.disabled = true;
+    btn.textContent = 'در حال ذخیره...';
+
+    await supabaseClient.from('doctor_services').delete().eq('doctor_id', currentUserId);
+
+    let insertError = null;
+    if (selectedIds.length > 0) {
+      const { error } = await supabaseClient
+        .from('doctor_services')
+        .insert(selectedIds.map(id => ({ doctor_id: currentUserId, service_id: id })));
+      insertError = error;
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'ذخیره خدمات';
+
+    if (insertError) {
+      console.error(insertError);
+      errorBox.textContent = 'خطا در ذخیره خدمات. لطفاً دوباره تلاش کنید.';
+      errorBox.classList.remove('hidden');
+      return;
+    }
+
+    successBox.textContent = 'خدمات شما با موفقیت ذخیره شد.';
+    successBox.classList.remove('hidden');
+  });
+
   // ---------------- برنامه‌ی نوبت‌دهی (۴ هفته‌ی واقعی پیش رو) ----------------
   let currentUserId = null;
   let weekOffset = 0;
@@ -423,6 +494,9 @@
       : 'مشاهده و مدیریت نوبت‌های مربوط به شما';
 
     if (myRole === 'doctor') {
+      document.getElementById('myServicesSection').classList.remove('hidden');
+      await loadMyServices();
+
       document.getElementById('weekScheduleSection').classList.remove('hidden');
       await renderWeek();
     }
