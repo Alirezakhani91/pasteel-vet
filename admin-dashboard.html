@@ -80,6 +80,20 @@
   <h1 class="text-2xl font-extrabold text-forestDark mb-1">مدیریت نوبت‌ها</h1>
   <p id="subtitle" class="text-sm text-ink/45 mb-8"></p>
 
+  <!-- ساعات کاری (فقط برای پزشک) -->
+  <section id="availabilitySection" class="hidden bg-white rounded-[2rem] border border-ink/[0.06] p-7 mb-10">
+    <h2 class="text-lg font-bold text-forestDark mb-1">ساعات کاری من</h2>
+    <p class="text-sm text-ink/45 mb-5">روزها و بازه‌ی ساعتی که برای بیماران نوبت‌دهی فعال دارید را مشخص کنید. تغییرات بلافاصله روی صفحه‌ی رزرو نوبت اعمال می‌شود.</p>
+    <div id="availabilityRows" class="space-y-3"></div>
+    <p id="availabilityError" class="hidden text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3 mt-4"></p>
+    <p id="availabilitySuccess" class="hidden text-sm text-forest bg-mist rounded-xl px-4 py-3 mt-4"></p>
+    <button id="saveAvailabilityBtn" class="mt-5 bg-forest hover:bg-forestDark text-white font-bold px-6 py-3 rounded-xl transition-all shadow-lg shadow-forest/25 text-sm">
+      ذخیره ساعات کاری
+    </button>
+  </section>
+
+  <h2 class="text-lg font-bold text-forestDark mb-4">لیست نوبت‌ها</h2>
+
   <!-- filter tabs -->
   <div class="flex flex-wrap gap-2 mb-7">
     <button data-filter="all" class="filter-tab active px-4 py-2 rounded-xl text-sm font-bold bg-mist text-ink/60 transition-colors">همه</button>
@@ -96,6 +110,7 @@
 </main>
 
 <script src="supabase-client.js"></script>
+<script src="jalali.js"></script>
 <script>
   let allAppointments = [];
   let currentFilter = 'all';
@@ -109,9 +124,7 @@
   };
 
   function formatDate(dateStr) {
-    try {
-      return new Date(dateStr).toLocaleDateString('fa-IR', { year: 'numeric', month: 'long', day: 'numeric' });
-    } catch { return dateStr; }
+    return JalaliUtil.formatJalaliDisplay(dateStr, true);
   }
 
   function actionButtons(appt) {
@@ -248,6 +261,96 @@
     renderList();
   }
 
+  // ---------------- ساعات کاری دکتر ----------------
+  const DAY_ORDER = [6, 0, 1, 2, 3, 4, 5]; // شنبه تا جمعه (بر اساس Date.getDay(): 0=یکشنبه...6=شنبه)
+  const DAY_LABELS = { 6: 'شنبه', 0: 'یکشنبه', 1: 'دوشنبه', 2: 'سه‌شنبه', 3: 'چهارشنبه', 4: 'پنجشنبه', 5: 'جمعه' };
+  let currentUserId = null;
+
+  async function loadAvailability() {
+    const { data: rows } = await supabaseClient
+      .from('doctor_availability')
+      .select('weekday, start_time, end_time')
+      .eq('doctor_id', currentUserId);
+
+    const existing = new Map((rows || []).map(r => [r.weekday, r]));
+
+    const container = document.getElementById('availabilityRows');
+    container.innerHTML = DAY_ORDER.map(day => {
+      const row = existing.get(day);
+      const checked = !!row;
+      return `
+        <div class="flex items-center gap-3 flex-wrap" data-day="${day}">
+          <label class="flex items-center gap-2 w-24 shrink-0 cursor-pointer">
+            <input type="checkbox" class="avail-toggle w-4 h-4 accent-forest" ${checked ? 'checked' : ''}>
+            <span class="text-sm font-bold text-forestDark">${DAY_LABELS[day]}</span>
+          </label>
+          <input type="time" class="avail-start px-3 py-2 rounded-lg border border-ink/10 text-sm" value="${row?.start_time?.slice(0,5) || '09:00'}" ${checked ? '' : 'disabled'}>
+          <span class="text-ink/30 text-sm">تا</span>
+          <input type="time" class="avail-end px-3 py-2 rounded-lg border border-ink/10 text-sm" value="${row?.end_time?.slice(0,5) || '17:00'}" ${checked ? '' : 'disabled'}>
+        </div>
+      `;
+    }).join('');
+
+    container.querySelectorAll('.avail-toggle').forEach(cb => {
+      cb.addEventListener('change', () => {
+        const row = cb.closest('[data-day]');
+        row.querySelector('.avail-start').disabled = !cb.checked;
+        row.querySelector('.avail-end').disabled = !cb.checked;
+      });
+    });
+  }
+
+  document.getElementById('saveAvailabilityBtn').addEventListener('click', async () => {
+    const errorBox = document.getElementById('availabilityError');
+    const successBox = document.getElementById('availabilitySuccess');
+    errorBox.classList.add('hidden');
+    successBox.classList.add('hidden');
+
+    const rows = [];
+    let hasError = false;
+
+    document.querySelectorAll('#availabilityRows [data-day]').forEach(rowEl => {
+      const day = parseInt(rowEl.dataset.day);
+      const checked = rowEl.querySelector('.avail-toggle').checked;
+      if (!checked) return;
+      const start = rowEl.querySelector('.avail-start').value;
+      const end = rowEl.querySelector('.avail-end').value;
+      if (!start || !end || start >= end) { hasError = true; return; }
+      rows.push({ doctor_id: currentUserId, weekday: day, start_time: start, end_time: end });
+    });
+
+    if (hasError) {
+      errorBox.textContent = 'ساعت شروع هر روز باید قبل از ساعت پایان آن باشد.';
+      errorBox.classList.remove('hidden');
+      return;
+    }
+
+    const btn = document.getElementById('saveAvailabilityBtn');
+    btn.disabled = true;
+    btn.textContent = 'در حال ذخیره...';
+
+    await supabaseClient.from('doctor_availability').delete().eq('doctor_id', currentUserId);
+
+    let insertError = null;
+    if (rows.length > 0) {
+      const { error } = await supabaseClient.from('doctor_availability').insert(rows);
+      insertError = error;
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'ذخیره ساعات کاری';
+
+    if (insertError) {
+      console.error(insertError);
+      errorBox.textContent = 'خطا در ذخیره ساعات کاری. لطفاً دوباره تلاش کنید.';
+      errorBox.classList.remove('hidden');
+      return;
+    }
+
+    successBox.textContent = 'ساعات کاری با موفقیت ذخیره شد.';
+    successBox.classList.remove('hidden');
+  });
+
   async function init() {
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (!session) {
@@ -255,6 +358,7 @@
       return;
     }
     const user = session.user;
+    currentUserId = user.id;
 
     const { data: profile } = await supabaseClient
       .from('profiles')
@@ -276,6 +380,11 @@
     document.getElementById('subtitle').textContent = myRole === 'admin'
       ? 'مشاهده و مدیریت همه نوبت‌های ثبت‌شده در کلینیک'
       : 'مشاهده و مدیریت نوبت‌های مربوط به شما';
+
+    if (myRole === 'doctor') {
+      document.getElementById('availabilitySection').classList.remove('hidden');
+      await loadAvailability();
+    }
 
     document.getElementById('pageContent').classList.remove('hidden');
 
