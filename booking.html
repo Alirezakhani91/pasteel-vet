@@ -101,12 +101,59 @@
   <!-- ===== STEP 2: DOCTOR ===== -->
   <section id="step2" class="step-panel hidden">
     <h2 class="text-lg font-bold text-forestDark">۲. انتخاب دامپزشک</h2>
-    <p id="selectedServiceHint" class="text-sm text-ink/45 mt-1 mb-5"></p>
+    <p id="selectedServiceHint" class="text-sm text-ink/45 mt-1"></p>
+
+    <div class="mt-5 mb-5">
+      <label for="doctorSearchInput" class="block text-sm font-bold text-forestDark mb-2">
+        جست‌وجوی پزشک
+      </label>
+
+      <div class="relative">
+        <input
+          id="doctorSearchInput"
+          type="search"
+          autocomplete="off"
+          placeholder="نام پزشک را وارد کنید..."
+          class="w-full bg-white border border-ink/10 rounded-2xl pr-12 pl-12 py-3.5 text-sm outline-none focus:border-forest focus:ring-2 focus:ring-forest/15 transition-all"
+        >
+
+        <svg
+          class="absolute right-4 top-1/2 -translate-y-1/2 text-ink/35 pointer-events-none"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+        >
+          <circle cx="11" cy="11" r="7"/>
+          <path d="M20 20l-3.5-3.5"/>
+        </svg>
+
+        <button
+          id="clearDoctorSearchBtn"
+          type="button"
+          class="hidden absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-mist text-forest hover:bg-forest hover:text-white transition-colors items-center justify-center"
+          aria-label="پاک کردن جست‌وجو"
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <p id="doctorSearchResultCount" class="hidden text-xs text-ink/40 mt-2"></p>
+    </div>
 
     <div id="doctorsList" class="grid sm:grid-cols-2 gap-4"></div>
 
     <p id="doctorsEmpty" class="hidden text-sm text-ink/45 text-center bg-white border border-ink/[0.06] rounded-2xl px-5 py-8">
       در حال حاضر هیچ دامپزشکی برای این خدمت ثبت نشده است.
+    </p>
+
+    <p id="doctorSearchEmpty" class="hidden text-sm text-ink/45 text-center bg-white border border-ink/[0.06] rounded-2xl px-5 py-8">
+      پزشکی با این نام در میان ارائه‌دهندگان این خدمت پیدا نشد.
     </p>
 
     <button data-back="1" class="back-btn mt-6 text-sm font-bold text-ink/50 hover:text-forest transition-colors">◂ بازگشت و تغییر خدمت</button>
@@ -381,6 +428,13 @@
         document.getElementById('selectedServiceHint').textContent =
           `پزشکان ارائه‌دهنده خدمت «${selectedService.title}»`;
 
+        const doctorSearchInput = document.getElementById('doctorSearchInput');
+        doctorSearchInput.value = '';
+        document.getElementById('clearDoctorSearchBtn').classList.add('hidden');
+        document.getElementById('clearDoctorSearchBtn').classList.remove('flex');
+        document.getElementById('doctorSearchResultCount').classList.add('hidden');
+        document.getElementById('doctorSearchEmpty').classList.add('hidden');
+
         document.getElementById('dateInput').value = '';
         document.getElementById('slotsWrap').classList.add('hidden');
         document.getElementById('slotsList').innerHTML = '';
@@ -566,6 +620,7 @@
       return `
         <article
           data-doctor-card="${doctor.id}"
+          data-doctor-name="${escapeReviewText(getDoctorFullName(doctor)).toLowerCase()}"
           tabindex="0"
           role="button"
           aria-label="انتخاب ${name}"
@@ -627,6 +682,61 @@
         </article>
       `;
     }).join('');
+
+    const doctorSearchInput = document.getElementById('doctorSearchInput');
+    const clearDoctorSearchBtn = document.getElementById('clearDoctorSearchBtn');
+    const doctorSearchResultCount = document.getElementById('doctorSearchResultCount');
+    const doctorSearchEmpty = document.getElementById('doctorSearchEmpty');
+
+    function normalizeDoctorSearch(value) {
+      return String(value || '')
+        .trim()
+        .toLowerCase()
+        .replace(/^دکتر\s+/, '')
+        .replace(/\s+/g, ' ')
+        .replace(/ي/g, 'ی')
+        .replace(/ك/g, 'ک');
+    }
+
+    function filterDoctorsByName() {
+      const query = normalizeDoctorSearch(doctorSearchInput.value);
+      const doctorCards = [...list.querySelectorAll('.doctor-card')];
+      let visibleCount = 0;
+
+      doctorCards.forEach(card => {
+        const fullName = normalizeDoctorSearch(card.dataset.doctorName);
+        const shouldShow = !query || fullName.includes(query);
+
+        card.classList.toggle('hidden', !shouldShow);
+
+        if (shouldShow) {
+          visibleCount += 1;
+        }
+      });
+
+      if (query) {
+        clearDoctorSearchBtn.classList.remove('hidden');
+        clearDoctorSearchBtn.classList.add('flex');
+
+        doctorSearchResultCount.textContent =
+          `${visibleCount} پزشک پیدا شد`;
+        doctorSearchResultCount.classList.remove('hidden');
+      } else {
+        clearDoctorSearchBtn.classList.add('hidden');
+        clearDoctorSearchBtn.classList.remove('flex');
+        doctorSearchResultCount.classList.add('hidden');
+      }
+
+      doctorSearchEmpty.classList.toggle('hidden', visibleCount !== 0 || !query);
+    }
+
+    doctorSearchInput.oninput = filterDoctorsByName;
+
+    clearDoctorSearchBtn.onclick = () => {
+      doctorSearchInput.value = '';
+      filterDoctorsByName();
+      doctorSearchInput.focus();
+    };
 
     function selectDoctor(doctorId) {
       selectedDoctor = doctors.find(
