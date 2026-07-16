@@ -4,138 +4,436 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ورود یا ثبت‌نام | پاستیل</title>
+
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script src="https://cdn.tailwindcss.com"></script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
 <script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        fontFamily: { vazir: ['Vazirmatn', 'sans-serif'] },
-        colors: {
-          cream: '#FAF9F5',
-          ink: '#16231F',
-          forest: '#1F5C52',
-          forestDark: '#153F38',
-          sage: '#7FA793',
-          lagoon: '#4E9C93',
-          mist: '#E7EFE9',
-          coral: '#E8926A',
-        }
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { vazir: ['Vazirmatn', 'sans-serif'] },
+      colors: {
+        cream: '#FAF9F5',
+        ink: '#16231F',
+        forest: '#1F5C52',
+        forestDark: '#153F38',
+        sage: '#7FA793',
+        lagoon: '#4E9C93',
+        mist: '#E7EFE9',
+        coral: '#E8926A',
+        blush: '#F6E1E7',
+        nude: '#EFD6CB',
+        roseDust: '#C993A4',
+        shell: '#FFF4F0'
       }
     }
   }
+}
 </script>
+
 <style>
   * { font-family: 'Vazirmatn', sans-serif; }
-  .tab-active { background: #1F5C52; color: white; }
+  .tab-active { background: #1F5C52; color: #fff; }
+
   .spinner {
-    border: 2px solid rgba(255,255,255,0.3);
-    border-top-color: white;
+    border: 2px solid rgba(255,255,255,.3);
+    border-top-color: #fff;
     border-radius: 50%;
-    width: 16px; height: 16px;
+    width: 16px;
+    height: 16px;
     animation: spin .7s linear infinite;
   }
-  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .account-card {
+    transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+  }
+
+  .account-card:hover {
+    transform: translateY(-3px);
+  }
+
+  .step-circle {
+    transition: background .2s ease, color .2s ease, border-color .2s ease;
+  }
+
+  .step-circle.active {
+    color: #fff;
+    background: #1F5C52;
+    border-color: #1F5C52;
+  }
+
+  .step-circle.done {
+    color: #1F5C52;
+    background: #E7EFE9;
+    border-color: #7FA793;
+  }
+
+  .field-input {
+    width: 100%;
+    padding: .8rem 1rem;
+    border-radius: .8rem;
+    border: 1px solid rgba(22,35,31,.1);
+    outline: none;
+    font-size: .875rem;
+    transition: border-color .2s ease, box-shadow .2s ease;
+  }
+
+  .field-input:focus {
+    border-color: #1F5C52;
+    box-shadow: 0 0 0 3px rgba(31,92,82,.12);
+  }
+
+  .service-checkbox:checked + label {
+    background: #E7EFE9;
+    color: #153F38;
+    border-color: #7FA793;
+  }
 </style>
 </head>
-<body class="bg-cream text-ink antialiased min-h-screen flex items-center justify-center px-4 py-10">
 
-<div class="w-full max-w-md">
+<body class="bg-cream text-ink antialiased min-h-screen px-4 py-10">
 
-  <!-- logo -->
-  <div class="flex items-center justify-center gap-2.5 mb-8">
-    <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
-      <circle cx="20" cy="20" r="19" stroke="#1F5C52" stroke-width="1.4"/>
-      <path d="M13 22c0-4 3-7 7-7s7 3 7 7-3 5-7 5-7-1-7-5Z" fill="#1F5C52"/>
-      <circle cx="14.5" cy="14" r="2.1" fill="#1F5C52"/>
-      <circle cx="19.5" cy="11.5" r="2.1" fill="#1F5C52"/>
-      <circle cx="25.5" cy="14" r="2.1" fill="#1F5C52"/>
-    </svg>
-    <span class="text-xl font-extrabold tracking-tight text-forestDark">پاستیل</span>
-  </div>
+<div class="w-full max-w-2xl mx-auto">
 
-  <div class="bg-white rounded-[2rem] border border-ink/[0.06] shadow-xl shadow-forest/[0.06] p-8">
+  <!-- Logo -->
+  <a href="index.html" class="flex items-center justify-center gap-2.5 mb-8">
+    <span class="w-11 h-11 rounded-2xl bg-blush text-forest flex items-center justify-center shadow-sm">
+      <svg width="27" height="27" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+        <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+      </svg>
+    </span>
+    <span class="text-2xl font-extrabold tracking-tight text-forestDark">پاستیل</span>
+  </a>
 
-    <!-- tabs -->
-    <div class="flex bg-mist rounded-2xl p-1.5 mb-7">
-      <button id="tabLogin" class="tab-active flex-1 py-2.5 rounded-xl text-sm font-bold transition-colors">ورود</button>
-      <button id="tabSignup" class="flex-1 py-2.5 rounded-xl text-sm font-bold text-ink/60 transition-colors">ثبت‌نام</button>
+  <div class="relative overflow-hidden bg-white rounded-[2rem] border border-ink/[0.06] shadow-xl shadow-forest/[0.06] p-6 sm:p-8">
+
+    <div aria-hidden="true" class="absolute -top-20 -left-16 w-48 h-48 rounded-full bg-blush/60"></div>
+    <div aria-hidden="true" class="absolute -bottom-24 -right-20 w-56 h-56 rounded-full bg-nude/45"></div>
+
+    <div class="relative">
+
+      <!-- Login / Signup Tabs -->
+      <div class="flex bg-mist rounded-2xl p-1.5 mb-7 max-w-md mx-auto">
+        <button type="button" id="tabLogin" class="tab-active flex-1 py-2.5 rounded-xl text-sm font-bold transition-colors">
+          ورود
+        </button>
+        <button type="button" id="tabSignup" class="flex-1 py-2.5 rounded-xl text-sm font-bold text-ink/60 transition-colors">
+          ثبت‌نام
+        </button>
+      </div>
+
+      <!-- ================= LOGIN ================= -->
+      <form id="loginForm" class="space-y-4 max-w-md mx-auto">
+        <div class="text-center mb-6">
+          <h1 class="text-xl font-extrabold text-forestDark">ورود به حساب کاربری</h1>
+          <p class="text-xs text-ink/45 mt-2">با شماره موبایل و رمز عبور ثابت وارد شوید.</p>
+        </div>
+
+        <div>
+          <label class="block text-sm font-bold text-forestDark mb-1.5">شماره موبایل</label>
+          <input
+            type="tel"
+            id="loginPhone"
+            required
+            inputmode="numeric"
+            autocomplete="tel"
+            maxlength="11"
+            placeholder="09121234567"
+            class="field-input"
+            dir="ltr"
+          >
+        </div>
+
+        <div>
+          <label class="block text-sm font-bold text-forestDark mb-1.5">رمز عبور</label>
+          <input
+            type="password"
+            id="loginPassword"
+            required
+            autocomplete="current-password"
+            placeholder="••••••••"
+            class="field-input"
+            dir="ltr"
+          >
+        </div>
+
+        <p id="loginError" class="hidden text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3 leading-6"></p>
+        <p id="loginInfo" class="hidden text-sm text-forest bg-mist rounded-xl px-4 py-3 leading-6"></p>
+
+        <button
+          type="submit"
+          id="loginBtn"
+          class="w-full bg-forest hover:bg-forestDark text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-forest/25 flex items-center justify-center gap-2"
+        >
+          <span>ورود به حساب کاربری</span>
+        </button>
+      </form>
+
+      <!-- ================= SIGNUP AREA ================= -->
+      <section id="signupArea" class="hidden">
+
+        <!-- Signup Type Chooser -->
+        <div id="signupChooser">
+          <div class="text-center mb-7">
+            <h1 class="text-xl sm:text-2xl font-extrabold text-forestDark">نوع ثبت‌نام را انتخاب کنید</h1>
+            <p class="text-sm text-ink/45 mt-2">فرم مناسب حساب شما نمایش داده می‌شود.</p>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-4">
+            <button
+              type="button"
+              id="choosePetOwner"
+              class="account-card text-right bg-shell/60 hover:bg-white border border-nude/80 hover:border-roseDust rounded-3xl p-5 shadow-sm hover:shadow-lg"
+            >
+              <span class="w-12 h-12 rounded-2xl bg-blush text-roseDust flex items-center justify-center mb-4">
+                <svg width="26" height="26" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+                  <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+                  <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+                  <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+                  <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+                  <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+                </svg>
+              </span>
+
+              <span class="block text-base font-extrabold text-forestDark">
+                ثبت‌نام سرپرست حیوان خانگی
+              </span>
+
+              <span class="block text-xs text-ink/50 leading-6 mt-2">
+                برای پیدا کردن دامپزشک، رزرو نوبت و مدیریت نوبت‌های حیوان خانگی
+              </span>
+            </button>
+
+            <button
+              type="button"
+              id="chooseDoctor"
+              class="account-card text-right bg-mist/55 hover:bg-white border border-sage/30 hover:border-forest rounded-3xl p-5 shadow-sm hover:shadow-lg"
+            >
+              <span class="w-12 h-12 rounded-2xl bg-mist text-forest flex items-center justify-center mb-4">
+                <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M9 3h6"/>
+                  <path d="M10 3v5.2a4 4 0 0 0 8 0V6"/>
+                  <path d="M18 6h2"/>
+                  <path d="M6 8v3a6 6 0 0 0 12 0"/>
+                  <path d="M12 17v4"/>
+                  <path d="M9 21h6"/>
+                </svg>
+              </span>
+
+              <span class="block text-base font-extrabold text-forestDark">
+                ثبت‌نام دامپزشک
+              </span>
+
+              <span class="block text-xs text-ink/50 leading-6 mt-2">
+                ثبت اطلاعات حرفه‌ای و ارسال درخواست همکاری برای بررسی پاستیل
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Pet Owner Form -->
+        <form id="petOwnerForm" class="hidden space-y-4 max-w-md mx-auto">
+          <button type="button" class="backToChooser text-xs font-bold text-forest hover:text-forestDark">
+            ← بازگشت به انتخاب نوع ثبت‌نام
+          </button>
+
+          <div class="text-center mb-6">
+            <h2 class="text-xl font-extrabold text-forestDark">ثبت‌نام سرپرست حیوان خانگی</h2>
+            <p class="text-xs text-ink/45 mt-2">فقط اطلاعات ضروری را وارد کنید.</p>
+          </div>
+
+          <div>
+            <label class="block text-sm font-bold text-forestDark mb-1.5">نام و نام خانوادگی</label>
+            <input type="text" id="ownerName" required autocomplete="name" placeholder="مثلاً: سارا احمدی" class="field-input">
+          </div>
+
+          <div>
+            <label class="block text-sm font-bold text-forestDark mb-1.5">شماره موبایل</label>
+            <input type="tel" id="ownerPhone" required inputmode="numeric" autocomplete="tel" maxlength="11" placeholder="09121234567" class="field-input" dir="ltr">
+          </div>
+
+          <div>
+            <label class="block text-sm font-bold text-forestDark mb-1.5">رمز عبور</label>
+            <input type="password" id="ownerPassword" required minlength="6" autocomplete="new-password" placeholder="حداقل ۶ کاراکتر" class="field-input" dir="ltr">
+          </div>
+
+          <div>
+            <label class="block text-sm font-bold text-forestDark mb-1.5">تکرار رمز عبور</label>
+            <input type="password" id="ownerPasswordConfirm" required minlength="6" autocomplete="new-password" placeholder="رمز عبور را دوباره وارد کنید" class="field-input" dir="ltr">
+          </div>
+
+          <p id="ownerError" class="hidden text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3 leading-6"></p>
+
+          <button type="submit" id="ownerSignupBtn" class="w-full bg-forest hover:bg-forestDark text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-forest/25 flex items-center justify-center gap-2">
+            <span>ساخت حساب سرپرست حیوان خانگی</span>
+          </button>
+        </form>
+
+        <!-- Doctor Multi-Step Form -->
+        <form id="doctorForm" class="hidden">
+          <button type="button" class="backToChooser text-xs font-bold text-forest hover:text-forestDark mb-5">
+            ← بازگشت به انتخاب نوع ثبت‌نام
+          </button>
+
+          <div class="text-center mb-6">
+            <h2 class="text-xl font-extrabold text-forestDark">ثبت‌نام دامپزشک</h2>
+            <p class="text-xs text-ink/45 mt-2">اطلاعات پس از ارسال توسط مدیر پاستیل بررسی می‌شود.</p>
+          </div>
+
+          <!-- Progress -->
+          <div class="flex items-center justify-center gap-2 sm:gap-4 mb-7" aria-label="مراحل فرم">
+            <div class="flex items-center gap-2">
+              <span data-step-circle="1" class="step-circle active w-8 h-8 rounded-full border border-forest flex items-center justify-center text-xs font-extrabold">۱</span>
+              <span class="hidden sm:inline text-xs font-bold text-ink/55">حساب</span>
+            </div>
+            <span class="w-10 sm:w-16 h-px bg-ink/10"></span>
+            <div class="flex items-center gap-2">
+              <span data-step-circle="2" class="step-circle w-8 h-8 rounded-full border border-ink/15 text-ink/40 flex items-center justify-center text-xs font-extrabold">۲</span>
+              <span class="hidden sm:inline text-xs font-bold text-ink/55">حرفه‌ای</span>
+            </div>
+            <span class="w-10 sm:w-16 h-px bg-ink/10"></span>
+            <div class="flex items-center gap-2">
+              <span data-step-circle="3" class="step-circle w-8 h-8 rounded-full border border-ink/15 text-ink/40 flex items-center justify-center text-xs font-extrabold">۳</span>
+              <span class="hidden sm:inline text-xs font-bold text-ink/55">پروفایل</span>
+            </div>
+          </div>
+
+          <!-- Step 1 -->
+          <div data-doctor-step="1" class="space-y-4 max-w-md mx-auto">
+            <div>
+              <label class="block text-sm font-bold text-forestDark mb-1.5">نام و نام خانوادگی</label>
+              <input type="text" id="doctorName" required autocomplete="name" placeholder="مثلاً: نازنین احمدی" class="field-input">
+            </div>
+
+            <div>
+              <label class="block text-sm font-bold text-forestDark mb-1.5">شماره موبایل</label>
+              <input type="tel" id="doctorPhone" required inputmode="numeric" autocomplete="tel" maxlength="11" placeholder="09121234567" class="field-input" dir="ltr">
+            </div>
+
+            <div>
+              <label class="block text-sm font-bold text-forestDark mb-1.5">رمز عبور</label>
+              <input type="password" id="doctorPassword" required minlength="6" autocomplete="new-password" placeholder="حداقل ۶ کاراکتر" class="field-input" dir="ltr">
+            </div>
+
+            <div>
+              <label class="block text-sm font-bold text-forestDark mb-1.5">تکرار رمز عبور</label>
+              <input type="password" id="doctorPasswordConfirm" required minlength="6" autocomplete="new-password" placeholder="رمز عبور را دوباره وارد کنید" class="field-input" dir="ltr">
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div data-doctor-step="2" class="hidden space-y-4">
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-bold text-forestDark mb-1.5">شماره نظام دامپزشکی</label>
+                <input type="text" id="doctorLicenseNumber" required placeholder="شماره عضویت یا پروانه" class="field-input" dir="ltr">
+              </div>
+
+              <div>
+                <label class="block text-sm font-bold text-forestDark mb-1.5">تخصص</label>
+                <input type="text" id="doctorSpecialty" required placeholder="مثلاً: دامپزشک عمومی" class="field-input">
+              </div>
+
+              <div>
+                <label class="block text-sm font-bold text-forestDark mb-1.5">سابقه فعالیت</label>
+                <div class="relative">
+                  <input type="number" id="doctorExperienceYears" required min="0" max="80" placeholder="مثلاً ۵" class="field-input pl-14" dir="ltr">
+                  <span class="absolute left-4 top-1/2 -translate-y-1/2 text-xs text-ink/40">سال</span>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-sm font-bold text-forestDark mb-1.5">شهر محل فعالیت</label>
+                <input type="text" id="doctorCity" required placeholder="مثلاً: تهران" class="field-input">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-bold text-forestDark mb-1.5">نام محل فعالیت</label>
+              <input type="text" id="doctorWorkplaceName" placeholder="نام مطب، کلینیک یا بیمارستان محل فعالیت" class="field-input">
+              <p class="text-[11px] text-ink/40 mt-1.5">این قسمت اختیاری است.</p>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div data-doctor-step="3" class="hidden space-y-5">
+            <div>
+              <label class="block text-sm font-bold text-forestDark mb-1.5">معرفی حرفه‌ای</label>
+              <textarea id="doctorBio" rows="4" maxlength="700" placeholder="درباره تجربه، حوزه کاری و رویکرد درمانی خود بنویسید..." class="field-input resize-y"></textarea>
+              <p class="text-[11px] text-ink/40 mt-1.5">حداکثر ۷۰۰ کاراکتر</p>
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between gap-3 mb-2">
+                <label class="block text-sm font-bold text-forestDark">خدمات قابل ارائه</label>
+                <span id="selectedServicesCount" class="text-[11px] text-ink/40">۰ انتخاب</span>
+              </div>
+
+              <div id="doctorServicesContainer" class="grid sm:grid-cols-2 gap-2">
+                <p class="sm:col-span-2 text-sm text-ink/40 bg-cream rounded-xl px-4 py-4 text-center">
+                  در حال بارگذاری خدمات...
+                </p>
+              </div>
+            </div>
+
+            <label class="flex items-start gap-3 bg-cream/80 border border-ink/[0.06] rounded-2xl p-4 cursor-pointer">
+              <input type="checkbox" id="doctorAccuracyConfirm" required class="mt-1 accent-forest">
+              <span class="text-xs text-ink/60 leading-6">
+                تأیید می‌کنم اطلاعات واردشده صحیح است و می‌دانم حساب دامپزشکی فقط پس از بررسی و تأیید پاستیل فعال می‌شود.
+              </span>
+            </label>
+          </div>
+
+          <p id="doctorError" class="hidden mt-5 text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3 leading-6"></p>
+
+          <div class="mt-7 flex items-center gap-3">
+            <button type="button" id="doctorPrevBtn" class="hidden flex-1 border border-ink/10 hover:border-forest text-ink/65 hover:text-forest font-bold py-3.5 rounded-xl transition-colors">
+              مرحله قبل
+            </button>
+
+            <button type="button" id="doctorNextBtn" class="flex-1 bg-forest hover:bg-forestDark text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-forest/20">
+              مرحله بعد
+            </button>
+
+            <button type="submit" id="doctorSubmitBtn" class="hidden flex-1 bg-forest hover:bg-forestDark text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-forest/20 items-center justify-center gap-2">
+              <span>ارسال درخواست دامپزشک</span>
+            </button>
+          </div>
+        </form>
+
+        <!-- Doctor Success -->
+        <div id="doctorSuccessPanel" class="hidden max-w-md mx-auto text-center py-6">
+          <span class="w-16 h-16 rounded-3xl bg-mist text-forest flex items-center justify-center mx-auto mb-5">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 6 9 17l-5-5"/>
+            </svg>
+          </span>
+
+          <h2 class="text-xl font-extrabold text-forestDark">درخواست شما ثبت شد</h2>
+
+          <p class="text-sm text-ink/55 leading-7 mt-3">
+            اطلاعات حرفه‌ای شما برای بررسی پاستیل ارسال شد. پس از تأیید، حساب دامپزشکی شما فعال می‌شود.
+          </p>
+
+          <button type="button" id="returnToLoginBtn" class="mt-7 w-full bg-forest hover:bg-forestDark text-white font-bold py-3.5 rounded-xl transition-all">
+            بازگشت به صفحه ورود
+          </button>
+        </div>
+      </section>
+
     </div>
-
-    <!-- ============= LOGIN FORM ============= -->
-    <form id="loginForm" class="space-y-4">
-      <div>
-        <label class="block text-sm font-bold text-forestDark mb-1.5">شماره موبایل</label>
-        <input
-          type="tel"
-          id="loginPhone"
-          required
-          inputmode="numeric"
-          autocomplete="tel"
-          maxlength="11"
-          placeholder="09121234567"
-          class="w-full px-4 py-3 rounded-xl border border-ink/10 focus:border-forest focus:ring-2 focus:ring-forest/20 outline-none transition-all text-sm"
-          dir="ltr"
-        >
-      </div>
-      <div>
-        <label class="block text-sm font-bold text-forestDark mb-1.5">رمز عبور</label>
-        <input type="password" id="loginPassword" required placeholder="••••••••"
-          class="w-full px-4 py-3 rounded-xl border border-ink/10 focus:border-forest focus:ring-2 focus:ring-forest/20 outline-none transition-all text-sm" dir="ltr">
-        <p class="text-[11px] text-ink/40 mt-1.5">
-          شماره موبایل و رمز عبور ثابت حساب خود را وارد کنید.
-        </p>
-      </div>
-
-      <p id="loginError" class="hidden text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3"></p>
-
-      <button type="submit" id="loginBtn"
-        class="w-full bg-forest hover:bg-forestDark text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-forest/25 flex items-center justify-center gap-2">
-        <span>ورود به حساب کاربری</span>
-      </button>
-    </form>
-
-    <!-- ============= SIGNUP FORM ============= -->
-    <form id="signupForm" class="space-y-4 hidden">
-      <div>
-        <label class="block text-sm font-bold text-forestDark mb-1.5">نام و نام خانوادگی</label>
-        <input type="text" id="signupName" required placeholder="مثلاً: سارا احمدی"
-          class="w-full px-4 py-3 rounded-xl border border-ink/10 focus:border-forest focus:ring-2 focus:ring-forest/20 outline-none transition-all text-sm">
-      </div>
-      <div>
-        <label class="block text-sm font-bold text-forestDark mb-1.5">شماره موبایل</label>
-        <input
-          type="tel"
-          id="signupPhone"
-          required
-          inputmode="numeric"
-          autocomplete="tel"
-          maxlength="11"
-          placeholder="09121234567"
-          class="w-full px-4 py-3 rounded-xl border border-ink/10 focus:border-forest focus:ring-2 focus:ring-forest/20 outline-none transition-all text-sm"
-          dir="ltr"
-        >
-        <p class="text-[11px] text-ink/40 mt-1.5">
-          شماره را به شکل 09xxxxxxxxx وارد کنید.
-        </p>
-      </div>
-      <div>
-        <label class="block text-sm font-bold text-forestDark mb-1.5">رمز عبور</label>
-        <input type="password" id="signupPassword" required minlength="6" placeholder="حداقل ۶ کاراکتر"
-          class="w-full px-4 py-3 rounded-xl border border-ink/10 focus:border-forest focus:ring-2 focus:ring-forest/20 outline-none transition-all text-sm" dir="ltr">
-      </div>
-
-      <p id="signupError" class="hidden text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3"></p>
-      <p id="signupSuccess" class="hidden text-sm text-forest bg-mist rounded-xl px-4 py-3"></p>
-
-      <button type="submit" id="signupBtn"
-        class="w-full bg-forest hover:bg-forestDark text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-forest/25 flex items-center justify-center gap-2">
-        <span>ساخت حساب کاربری</span>
-      </button>
-    </form>
-
   </div>
 
   <p class="text-center text-xs text-ink/40 mt-6">
@@ -144,50 +442,116 @@
 </div>
 
 <script src="supabase-client.js"></script>
+
 <script>
-  // اگر کاربر از قبل لاگین کرده باشد، دیگر فرم ورود نشانش نمی‌دهیم؛
-  // مستقیم به صفحه‌ی اول برمی‌گردد (چون آنجا وضعیت لاگین را نشان می‌دهد)
+  const tabLogin = document.getElementById('tabLogin');
+  const tabSignup = document.getElementById('tabSignup');
+
+  const loginForm = document.getElementById('loginForm');
+  const signupArea = document.getElementById('signupArea');
+  const signupChooser = document.getElementById('signupChooser');
+  const petOwnerForm = document.getElementById('petOwnerForm');
+  const doctorForm = document.getElementById('doctorForm');
+  const doctorSuccessPanel = document.getElementById('doctorSuccessPanel');
+
+  const choosePetOwner = document.getElementById('choosePetOwner');
+  const chooseDoctor = document.getElementById('chooseDoctor');
+
+  const doctorPrevBtn = document.getElementById('doctorPrevBtn');
+  const doctorNextBtn = document.getElementById('doctorNextBtn');
+  const doctorSubmitBtn = document.getElementById('doctorSubmitBtn');
+
+  let doctorCurrentStep = 1;
+  let doctorServicesLoaded = false;
+
+  // ---------- Existing session ----------
   (async function checkExistingSession() {
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (session) {
       window.location.href = 'index.html';
     }
   })();
-</script>
-<script>
-  // ---------- tab switching ----------
-  const tabLogin = document.getElementById('tabLogin');
-  const tabSignup = document.getElementById('tabSignup');
-  const loginForm = document.getElementById('loginForm');
-  const signupForm = document.getElementById('signupForm');
 
-  tabLogin.addEventListener('click', () => {
+  // ---------- Tabs ----------
+  function activateLoginTab() {
     tabLogin.classList.add('tab-active');
     tabLogin.classList.remove('text-ink/60');
+
     tabSignup.classList.remove('tab-active');
     tabSignup.classList.add('text-ink/60');
-    loginForm.classList.remove('hidden');
-    signupForm.classList.add('hidden');
-  });
 
-  tabSignup.addEventListener('click', () => {
+    loginForm.classList.remove('hidden');
+    signupArea.classList.add('hidden');
+  }
+
+  function activateSignupTab() {
     tabSignup.classList.add('tab-active');
     tabSignup.classList.remove('text-ink/60');
+
     tabLogin.classList.remove('tab-active');
     tabLogin.classList.add('text-ink/60');
-    signupForm.classList.remove('hidden');
+
     loginForm.classList.add('hidden');
+    signupArea.classList.remove('hidden');
+
+    showSignupChooser();
+  }
+
+  tabLogin.addEventListener('click', activateLoginTab);
+  tabSignup.addEventListener('click', activateSignupTab);
+
+  function showSignupChooser() {
+    signupChooser.classList.remove('hidden');
+    petOwnerForm.classList.add('hidden');
+    doctorForm.classList.add('hidden');
+    doctorSuccessPanel.classList.add('hidden');
+
+    petOwnerForm.reset();
+    doctorForm.reset();
+    setDoctorStep(1);
+    clearAllMessages();
+  }
+
+  choosePetOwner.addEventListener('click', () => {
+    signupChooser.classList.add('hidden');
+    petOwnerForm.classList.remove('hidden');
   });
 
-  // ---------- helper: button loading state ----------
-  function setLoading(btn, loading, label) {
-    btn.disabled = loading;
-    btn.innerHTML = loading
-      ? `<span class="spinner"></span><span>در حال پردازش...</span>`
+  chooseDoctor.addEventListener('click', async () => {
+    signupChooser.classList.add('hidden');
+    doctorForm.classList.remove('hidden');
+    setDoctorStep(1);
+    await loadDoctorServices();
+  });
+
+  document.querySelectorAll('.backToChooser').forEach(button => {
+    button.addEventListener('click', showSignupChooser);
+  });
+
+  document.getElementById('returnToLoginBtn').addEventListener('click', () => {
+    activateLoginTab();
+
+    const infoBox = document.getElementById('loginInfo');
+    infoBox.textContent = 'درخواست دامپزشکی شما ثبت شده و در انتظار بررسی پاستیل است.';
+    infoBox.classList.remove('hidden');
+  });
+
+  // ---------- Helpers ----------
+  function setLoading(button, loading, label) {
+    button.disabled = loading;
+    button.innerHTML = loading
+      ? '<span class="spinner"></span><span>در حال پردازش...</span>'
       : `<span>${label}</span>`;
   }
 
-  // ---------- PHONE HELPERS ----------
+  function clearAllMessages() {
+    ['loginError', 'loginInfo', 'ownerError', 'doctorError'].forEach(id => {
+      const box = document.getElementById(id);
+      box.classList.add('hidden');
+      box.textContent = '';
+    });
+  }
+
   function toEnglishDigits(value) {
     const persianDigits = '۰۱۲۳۴۵۶۷۸۹';
     const arabicDigits = '٠١٢٣٤٥٦٧٨٩';
@@ -202,17 +566,14 @@
       .trim()
       .replace(/[^\d+]/g, '');
 
-    // 0098912... -> +98912...
     if (phone.startsWith('0098')) {
       phone = '+' + phone.slice(2);
     }
 
-    // 98912... -> +98912...
     if (phone.startsWith('98') && !phone.startsWith('+98')) {
       phone = '+' + phone;
     }
 
-    // 0912... -> +98912...
     if (/^09\d{9}$/.test(phone)) {
       return {
         valid: true,
@@ -221,7 +582,6 @@
       };
     }
 
-    // +98912... -> local 0912...
     if (/^\+989\d{9}$/.test(phone)) {
       return {
         valid: true,
@@ -237,8 +597,6 @@
     };
   }
 
-  // کاربر این ایمیل را نمی‌بیند.
-  // برای هر شماره موبایل، یک شناسه داخلی ثابت و یکتا ساخته می‌شود.
   function phoneToInternalEmail(normalizedPhone) {
     const digits = normalizedPhone.international.replace(/\D/g, '');
     return `${digits}@phone.pasteel.app`;
@@ -246,7 +604,6 @@
 
   function translateAuthError(error, mode) {
     const message = String(error?.message || '').toLowerCase();
-    const code = String(error?.code || '').toLowerCase();
 
     if (
       message.includes('already registered') ||
@@ -272,10 +629,30 @@
       : 'ثبت‌نام انجام نشد. لطفاً دوباره تلاش کنید.';
   }
 
-  // ورودی شماره موبایل فقط اعداد را نگه می‌دارد.
-  ['loginPhone', 'signupPhone'].forEach(inputId => {
+  function translateDoctorApplicationError(error) {
+    const message = String(error?.message || '');
+
+    if (message.includes('APPLICATION_ALREADY_EXISTS')) {
+      return 'برای این حساب قبلاً درخواست دامپزشکی ثبت شده است.';
+    }
+
+    if (message.includes('LICENSE_ALREADY_EXISTS')) {
+      return 'این شماره نظام دامپزشکی قبلاً ثبت شده است.';
+    }
+
+    if (message.includes('SERVICE_REQUIRED')) {
+      return 'حداقل یک خدمت را انتخاب کنید.';
+    }
+
+    if (message.includes('INVALID_SERVICE')) {
+      return 'یکی از خدمات انتخاب‌شده معتبر نیست. صفحه را بازخوانی کنید.';
+    }
+
+    return 'ثبت درخواست دامپزشکی انجام نشد. لطفاً اطلاعات را بررسی و دوباره تلاش کنید.';
+  }
+
+  ['loginPhone', 'ownerPhone', 'doctorPhone'].forEach(inputId => {
     const input = document.getElementById(inputId);
-    if (!input) return;
 
     input.addEventListener('input', () => {
       input.value = toEnglishDigits(input.value)
@@ -284,18 +661,18 @@
     });
   });
 
-  // ---------- LOGIN WITH PHONE + PASSWORD ----------
-  loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  // ---------- Login ----------
+  loginForm.addEventListener('submit', async event => {
+    event.preventDefault();
+    clearAllMessages();
 
     const errorBox = document.getElementById('loginError');
-    errorBox.classList.add('hidden');
-
+    const infoBox = document.getElementById('loginInfo');
     const normalizedPhone = normalizeIranMobile(
       document.getElementById('loginPhone').value
     );
     const password = document.getElementById('loginPassword').value;
-    const btn = document.getElementById('loginBtn');
+    const button = document.getElementById('loginBtn');
 
     if (!normalizedPhone.valid) {
       errorBox.textContent = 'شماره موبایل معتبر نیست. شماره را به شکل 09121234567 وارد کنید.';
@@ -303,42 +680,79 @@
       return;
     }
 
-    setLoading(btn, true);
+    setLoading(button, true);
 
-    const internalEmail = phoneToInternalEmail(normalizedPhone);
-
-    const { error } = await supabaseClient.auth.signInWithPassword({
-      email: internalEmail,
+    const { error: loginError } = await supabaseClient.auth.signInWithPassword({
+      email: phoneToInternalEmail(normalizedPhone),
       password
     });
 
-    setLoading(btn, false, 'ورود به حساب کاربری');
-
-    if (error) {
-      errorBox.textContent = translateAuthError(error, 'login');
+    if (loginError) {
+      setLoading(button, false, 'ورود به حساب کاربری');
+      errorBox.textContent = translateAuthError(loginError, 'login');
       errorBox.classList.remove('hidden');
       return;
+    }
+
+    const { data: profile } = await supabaseClient
+      .from('profiles')
+      .select('role')
+      .eq('id', (await supabaseClient.auth.getUser()).data.user.id)
+      .maybeSingle();
+
+    if (profile?.role === 'admin' || profile?.role === 'doctor') {
+      window.location.href = 'index.html';
+      return;
+    }
+
+    const { data: application, error: applicationError } = await supabaseClient
+      .from('doctor_applications')
+      .select('status, rejection_reason')
+      .maybeSingle();
+
+    if (!applicationError && application) {
+      await supabaseClient.auth.signOut();
+      setLoading(button, false, 'ورود به حساب کاربری');
+
+      if (application.status === 'pending') {
+        infoBox.textContent = 'درخواست دامپزشکی شما در انتظار بررسی پاستیل است.';
+        infoBox.classList.remove('hidden');
+        return;
+      }
+
+      if (application.status === 'rejected') {
+        errorBox.textContent = application.rejection_reason
+          ? `درخواست دامپزشکی تأیید نشد: ${application.rejection_reason}`
+          : 'درخواست دامپزشکی شما تأیید نشده است. برای اطلاعات بیشتر با پشتیبانی تماس بگیرید.';
+
+        errorBox.classList.remove('hidden');
+        return;
+      }
+
+      if (application.status === 'approved') {
+        infoBox.textContent = 'درخواست شما تأیید شده و حساب دامپزشکی در حال فعال‌سازی است.';
+        infoBox.classList.remove('hidden');
+        return;
+      }
     }
 
     window.location.href = 'index.html';
   });
 
-  // ---------- SIGNUP WITH PHONE + FIXED PASSWORD ----------
-  signupForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  // ---------- Pet Owner Signup ----------
+  petOwnerForm.addEventListener('submit', async event => {
+    event.preventDefault();
 
-    const errorBox = document.getElementById('signupError');
-    const successBox = document.getElementById('signupSuccess');
-
+    const errorBox = document.getElementById('ownerError');
     errorBox.classList.add('hidden');
-    successBox.classList.add('hidden');
 
-    const fullName = document.getElementById('signupName').value.trim();
+    const fullName = document.getElementById('ownerName').value.trim();
     const normalizedPhone = normalizeIranMobile(
-      document.getElementById('signupPhone').value
+      document.getElementById('ownerPhone').value
     );
-    const password = document.getElementById('signupPassword').value;
-    const btn = document.getElementById('signupBtn');
+    const password = document.getElementById('ownerPassword').value;
+    const passwordConfirm = document.getElementById('ownerPasswordConfirm').value;
+    const button = document.getElementById('ownerSignupBtn');
 
     if (!fullName) {
       errorBox.textContent = 'نام و نام خانوادگی را وارد کنید.';
@@ -352,68 +766,321 @@
       return;
     }
 
-    setLoading(btn, true);
+    if (password.length < 6) {
+      errorBox.textContent = 'رمز عبور باید حداقل ۶ کاراکتر داشته باشد.';
+      errorBox.classList.remove('hidden');
+      return;
+    }
 
-    const internalEmail = phoneToInternalEmail(normalizedPhone);
+    if (password !== passwordConfirm) {
+      errorBox.textContent = 'رمز عبور و تکرار آن یکسان نیست.';
+      errorBox.classList.remove('hidden');
+      return;
+    }
 
-    // در ظاهر فقط شماره موبایل دریافت می‌شود.
-    // Supabase پشت‌صحنه از یک ایمیل داخلی ساخته‌شده از شماره استفاده می‌کند.
+    setLoading(button, true);
+
     const { data, error } = await supabaseClient.auth.signUp({
-      email: internalEmail,
+      email: phoneToInternalEmail(normalizedPhone),
       password,
       options: {
         data: {
           full_name: fullName,
           phone: normalizedPhone.local,
-          role: 'patient',
+          registration_type: 'pet_owner',
           login_method: 'mobile_password'
         }
       }
     });
 
     if (error) {
-      setLoading(btn, false, 'ساخت حساب کاربری');
+      setLoading(button, false, 'ساخت حساب سرپرست حیوان خانگی');
       errorBox.textContent = translateAuthError(error, 'signup');
       errorBox.classList.remove('hidden');
       return;
     }
 
-    if (!data?.user?.id) {
-      setLoading(btn, false, 'ساخت حساب کاربری');
-      errorBox.textContent = 'حساب کاربری ساخته نشد. لطفاً دوباره تلاش کنید.';
+    if (!data?.session) {
+      setLoading(button, false, 'ساخت حساب سرپرست حیوان خانگی');
+      errorBox.textContent = 'ثبت‌نام انجام شد اما ورود خودکار فعال نیست. گزینه Confirm email را در Supabase خاموش کنید.';
       errorBox.classList.remove('hidden');
       return;
     }
 
-    // برای ورود فوری، Confirm email باید در Supabase خاموش باشد.
-    if (!data.session) {
-      setLoading(btn, false, 'ساخت حساب کاربری');
-      errorBox.textContent =
-        'حساب ساخته شد اما ورود خودکار انجام نشد. در Supabase گزینه Confirm email را خاموش کنید.';
-      errorBox.classList.remove('hidden');
-      return;
-    }
+    const { error: profileError } = await supabaseClient.rpc(
+      'create_pet_owner_profile',
+      {
+        p_full_name: fullName,
+        p_phone: normalizedPhone.local
+      }
+    );
 
-    // ذخیره شماره به شکل خوانای ایران در جدول profiles
-    const { error: profileError } = await supabaseClient
-      .from('profiles')
-      .insert({
-        id: data.user.id,
-        full_name: fullName,
-        phone: normalizedPhone.local,
-        role: 'patient'
-      });
-
-    setLoading(btn, false, 'ساخت حساب کاربری');
+    setLoading(button, false, 'ساخت حساب سرپرست حیوان خانگی');
 
     if (profileError) {
-      errorBox.textContent = 'حساب ساخته شد ولی ذخیره اطلاعات پروفایل انجام نشد.';
+      errorBox.textContent = 'حساب ساخته شد اما ذخیره پروفایل انجام نشد.';
       errorBox.classList.remove('hidden');
-      console.error('Profile insert error:', profileError);
+      console.error(profileError);
       return;
     }
 
     window.location.href = 'index.html';
+  });
+
+  // ---------- Doctor Steps ----------
+  function setDoctorStep(step) {
+    doctorCurrentStep = step;
+
+    document.querySelectorAll('[data-doctor-step]').forEach(section => {
+      section.classList.toggle(
+        'hidden',
+        Number(section.dataset.doctorStep) !== step
+      );
+    });
+
+    document.querySelectorAll('[data-step-circle]').forEach(circle => {
+      const circleStep = Number(circle.dataset.stepCircle);
+
+      circle.classList.remove('active', 'done');
+
+      if (circleStep === step) {
+        circle.classList.add('active');
+      } else if (circleStep < step) {
+        circle.classList.add('done');
+      }
+    });
+
+    doctorPrevBtn.classList.toggle('hidden', step === 1);
+    doctorNextBtn.classList.toggle('hidden', step === 3);
+    doctorSubmitBtn.classList.toggle('hidden', step !== 3);
+    doctorSubmitBtn.classList.toggle('flex', step === 3);
+
+    const errorBox = document.getElementById('doctorError');
+    errorBox.classList.add('hidden');
+  }
+
+  function validateDoctorStep(step) {
+    const errorBox = document.getElementById('doctorError');
+    errorBox.classList.add('hidden');
+
+    if (step === 1) {
+      const name = document.getElementById('doctorName').value.trim();
+      const phone = normalizeIranMobile(
+        document.getElementById('doctorPhone').value
+      );
+      const password = document.getElementById('doctorPassword').value;
+      const passwordConfirm = document.getElementById('doctorPasswordConfirm').value;
+
+      if (!name) {
+        errorBox.textContent = 'نام و نام خانوادگی را وارد کنید.';
+      } else if (!phone.valid) {
+        errorBox.textContent = 'شماره موبایل معتبر نیست.';
+      } else if (password.length < 6) {
+        errorBox.textContent = 'رمز عبور باید حداقل ۶ کاراکتر داشته باشد.';
+      } else if (password !== passwordConfirm) {
+        errorBox.textContent = 'رمز عبور و تکرار آن یکسان نیست.';
+      }
+
+      if (errorBox.textContent) {
+        errorBox.classList.remove('hidden');
+        return false;
+      }
+    }
+
+    if (step === 2) {
+      const licenseNumber = document.getElementById('doctorLicenseNumber').value.trim();
+      const specialty = document.getElementById('doctorSpecialty').value.trim();
+      const experience = Number(document.getElementById('doctorExperienceYears').value);
+      const city = document.getElementById('doctorCity').value.trim();
+
+      if (!licenseNumber) {
+        errorBox.textContent = 'شماره نظام دامپزشکی را وارد کنید.';
+      } else if (!specialty) {
+        errorBox.textContent = 'تخصص را وارد کنید.';
+      } else if (!Number.isInteger(experience) || experience < 0 || experience > 80) {
+        errorBox.textContent = 'سابقه فعالیت را به‌درستی وارد کنید.';
+      } else if (!city) {
+        errorBox.textContent = 'شهر محل فعالیت را وارد کنید.';
+      }
+
+      if (errorBox.textContent) {
+        errorBox.classList.remove('hidden');
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  doctorNextBtn.addEventListener('click', () => {
+    if (!validateDoctorStep(doctorCurrentStep)) return;
+    setDoctorStep(doctorCurrentStep + 1);
+  });
+
+  doctorPrevBtn.addEventListener('click', () => {
+    setDoctorStep(doctorCurrentStep - 1);
+  });
+
+  // ---------- Load Services ----------
+  async function loadDoctorServices() {
+    if (doctorServicesLoaded) return;
+
+    const container = document.getElementById('doctorServicesContainer');
+
+    const { data: services, error } = await supabaseClient
+      .from('services')
+      .select('id, title')
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      container.innerHTML = `
+        <p class="sm:col-span-2 text-sm text-red-600 bg-red-50 rounded-xl px-4 py-4 text-center">
+          خطا در بارگذاری خدمات
+        </p>
+      `;
+      return;
+    }
+
+    if (!services?.length) {
+      container.innerHTML = `
+        <p class="sm:col-span-2 text-sm text-ink/40 bg-cream rounded-xl px-4 py-4 text-center">
+          در حال حاضر خدمتی ثبت نشده است.
+        </p>
+      `;
+      return;
+    }
+
+    container.innerHTML = services.map(service => `
+      <div>
+        <input
+          type="checkbox"
+          id="doctorService-${service.id}"
+          value="${service.id}"
+          class="service-checkbox sr-only"
+        >
+        <label
+          for="doctorService-${service.id}"
+          class="block cursor-pointer border border-ink/[0.08] bg-white rounded-xl px-4 py-3 text-xs font-bold text-ink/60 transition-colors"
+        >
+          ${escapeHtml(service.title)}
+        </label>
+      </div>
+    `).join('');
+
+    container.querySelectorAll('.service-checkbox').forEach(checkbox => {
+      checkbox.addEventListener('change', updateSelectedServicesCount);
+    });
+
+    doctorServicesLoaded = true;
+    updateSelectedServicesCount();
+  }
+
+  function updateSelectedServicesCount() {
+    const count = document.querySelectorAll('.service-checkbox:checked').length;
+    document.getElementById('selectedServicesCount').textContent =
+      `${count.toLocaleString('fa-IR')} انتخاب`;
+  }
+
+  function escapeHtml(value) {
+    return String(value || '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+  }
+
+  // ---------- Doctor Signup ----------
+  doctorForm.addEventListener('submit', async event => {
+    event.preventDefault();
+
+    const errorBox = document.getElementById('doctorError');
+    errorBox.classList.add('hidden');
+
+    if (!validateDoctorStep(1) || !validateDoctorStep(2)) {
+      return;
+    }
+
+    const serviceIds = [
+      ...document.querySelectorAll('.service-checkbox:checked')
+    ].map(checkbox => checkbox.value);
+
+    if (!serviceIds.length) {
+      errorBox.textContent = 'حداقل یک خدمت را انتخاب کنید.';
+      errorBox.classList.remove('hidden');
+      return;
+    }
+
+    if (!document.getElementById('doctorAccuracyConfirm').checked) {
+      errorBox.textContent = 'برای ارسال درخواست باید صحت اطلاعات را تأیید کنید.';
+      errorBox.classList.remove('hidden');
+      return;
+    }
+
+    const fullName = document.getElementById('doctorName').value.trim();
+    const normalizedPhone = normalizeIranMobile(
+      document.getElementById('doctorPhone').value
+    );
+    const password = document.getElementById('doctorPassword').value;
+    const button = document.getElementById('doctorSubmitBtn');
+
+    setLoading(button, true);
+
+    const { data, error } = await supabaseClient.auth.signUp({
+      email: phoneToInternalEmail(normalizedPhone),
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+          phone: normalizedPhone.local,
+          registration_type: 'doctor_application',
+          login_method: 'mobile_password'
+        }
+      }
+    });
+
+    if (error) {
+      setLoading(button, false, 'ارسال درخواست دامپزشک');
+      errorBox.textContent = translateAuthError(error, 'signup');
+      errorBox.classList.remove('hidden');
+      return;
+    }
+
+    if (!data?.session) {
+      setLoading(button, false, 'ارسال درخواست دامپزشک');
+      errorBox.textContent = 'حساب ساخته شد اما ورود خودکار فعال نیست. گزینه Confirm email را در Supabase خاموش کنید.';
+      errorBox.classList.remove('hidden');
+      return;
+    }
+
+    const { error: applicationError } = await supabaseClient.rpc(
+      'submit_doctor_application',
+      {
+        p_full_name: fullName,
+        p_phone: normalizedPhone.local,
+        p_license_number: document.getElementById('doctorLicenseNumber').value.trim(),
+        p_specialty: document.getElementById('doctorSpecialty').value.trim(),
+        p_experience_years: Number(document.getElementById('doctorExperienceYears').value),
+        p_city: document.getElementById('doctorCity').value.trim(),
+        p_workplace_name: document.getElementById('doctorWorkplaceName').value.trim(),
+        p_bio: document.getElementById('doctorBio').value.trim(),
+        p_service_ids: serviceIds
+      }
+    );
+
+    setLoading(button, false, 'ارسال درخواست دامپزشک');
+
+    if (applicationError) {
+      errorBox.textContent = translateDoctorApplicationError(applicationError);
+      errorBox.classList.remove('hidden');
+      console.error(applicationError);
+      return;
+    }
+
+    await supabaseClient.auth.signOut();
+
+    doctorForm.classList.add('hidden');
+    doctorSuccessPanel.classList.remove('hidden');
   });
 </script>
 
