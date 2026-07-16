@@ -273,6 +273,7 @@ tailwind.config = {
         specialty,
         bio,
         photo_url,
+        workplace_name,
         city,
         experience_years,
         profiles ( full_name ),
@@ -435,6 +436,34 @@ tailwind.config = {
           <p class="text-sm font-bold text-forest mt-1">
             ${escapeText(doctor.specialty || 'دامپزشک')}
           </p>
+
+          ${
+            doctor.workplace_name
+              ? `
+                <p class="mt-2 inline-flex items-center justify-center gap-1.5 text-xs font-bold text-ink/50 leading-6">
+                  <svg
+                    width="15"
+                    height="15"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.9"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="text-roseDust shrink-0"
+                    aria-hidden="true"
+                  >
+                    <path d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/>
+                    <path d="M16 9h2a2 2 0 0 1 2 2v10"/>
+                    <path d="M8 7h4M8 11h4M8 15h4"/>
+                    <path d="M9 21v-3h2v3"/>
+                  </svg>
+
+                  <span>${escapeText(doctor.workplace_name)}</span>
+                </p>
+              `
+              : ''
+          }
 
           ${
             doctor.city || doctor.experience_years
