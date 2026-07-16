@@ -22,6 +22,10 @@
           lagoon: '#4E9C93',
           mist: '#E7EFE9',
           coral: '#E8926A',
+          blush: '#F6E1E7',
+          nude: '#EFD6CB',
+          roseDust: '#C993A4',
+          shell: '#FFF4F0',
         }
       }
     }
@@ -69,6 +73,177 @@
     animation: fadeIn .5s ease forwards;
   }
   @keyframes fadeIn { to { opacity: 1; } }
+
+  .hero-paw {
+    position: absolute;
+    color: #7FA793;
+    opacity: .14;
+    transform-origin: center;
+  }
+  .hero-paw--one { top: 20px; right: 3%; width: 108px; height: 108px; transform: rotate(-12deg); }
+  .hero-paw--two { bottom: 24px; left: 5%; width: 78px; height: 78px; opacity: .1; transform: rotate(14deg); }
+  .hero-paw--three { top: 44%; right: 42%; width: 54px; height: 54px; opacity: .08; transform: rotate(8deg); }
+
+  .paw-divider-line {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    color: rgba(31, 92, 82, .22);
+  }
+  .paw-divider-line::before,
+  .paw-divider-line::after {
+    content: "";
+    display: block;
+    width: 72px;
+    max-width: 18vw;
+    height: 1px;
+    background: currentColor;
+  }
+
+  .paw-card-watermark {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    width: 78px;
+    height: 78px;
+    color: #7FA793;
+    opacity: .08;
+    pointer-events: none;
+  }
+
+  .paw-soft-bg {
+    position: absolute;
+    inset: auto auto 14px 14px;
+    width: 42px;
+    height: 42px;
+    color: #7FA793;
+    opacity: .10;
+    pointer-events: none;
+  }
+
+  .paw-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .paw-chip svg {
+    width: 15px;
+    height: 15px;
+    color: currentColor;
+    flex: 0 0 auto;
+  }
+
+  .hero-card-glow {
+    position: absolute;
+    inset: auto auto -30px -30px;
+    width: 120px;
+    height: 120px;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgba(127,167,147,.22) 0%, rgba(127,167,147,0) 72%);
+    pointer-events: none;
+  }
+
+  .soft-paw {
+    color: #C993A4;
+    opacity: .15;
+  }
+
+  .soft-paw-nude {
+    color: #EFD6CB;
+    opacity: .32;
+  }
+
+  .paw-section-cloud {
+    position: absolute;
+    pointer-events: none;
+    filter: blur(0.2px);
+  }
+
+  .paw-bg-bubble {
+    position: absolute;
+    border-radius: 999px;
+    pointer-events: none;
+    background: radial-gradient(circle, rgba(246,225,231,.95) 0%, rgba(246,225,231,0) 72%);
+    opacity: .75;
+  }
+
+  .paw-search-shell {
+    background:
+      radial-gradient(circle at top left, rgba(246,225,231,.85) 0%, rgba(246,225,231,0) 30%),
+      radial-gradient(circle at bottom right, rgba(239,214,203,.75) 0%, rgba(239,214,203,0) 34%),
+      #ffffff;
+  }
+
+  .paw-service-icon-wrap {
+    box-shadow: 0 8px 24px rgba(201, 147, 164, .10);
+  }
+
+  .paw-quote-mark {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    width: 26px;
+    height: 26px;
+    color: rgba(246,225,231,.9);
+    pointer-events: none;
+  }
+
+  .doctor-card-paw {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    width: 62px;
+    height: 62px;
+    color: #F6E1E7;
+    opacity: .95;
+    pointer-events: none;
+  }
+
+  .doctor-card-soft-paw {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    width: 34px;
+    height: 34px;
+    color: #EFD6CB;
+    opacity: .55;
+    pointer-events: none;
+  }
+
+  .faq-paw-mark {
+    position: absolute;
+    left: 18px;
+    top: 16px;
+    width: 22px;
+    height: 22px;
+    color: #F6E1E7;
+    opacity: .95;
+    pointer-events: none;
+  }
+
+  .cta-paw-float {
+    position: absolute;
+    pointer-events: none;
+    opacity: .22;
+  }
+
+  .cta-paw-float.one { top: 16px; right: 22px; width: 88px; height: 88px; color: #C993A4; transform: rotate(-8deg); }
+  .cta-paw-float.two { bottom: 12px; left: 24px; width: 70px; height: 70px; color: #EFD6CB; transform: rotate(10deg); }
+
+  @media (max-width: 768px) {
+    .doctor-card-paw { width: 52px; height: 52px; }
+    .cta-paw-float.one { width: 62px; height: 62px; right: 10px; }
+    .cta-paw-float.two { width: 48px; height: 48px; left: 10px; }
+  }
+
+  @media (max-width: 768px) {
+    .hero-paw--one { width: 78px; height: 78px; right: 2%; top: 28px; }
+    .hero-paw--two { width: 56px; height: 56px; left: 4%; bottom: 16px; }
+    .hero-paw--three { display: none; }
+    .paw-divider-line::before,
+    .paw-divider-line::after { width: 44px; }
+  }
 </style>
 </head>
 <body class="bg-cream text-ink antialiased selection:bg-lagoon/30">
@@ -77,12 +252,15 @@
 <header class="sticky top-0 z-50 bg-cream/85 backdrop-blur-md border-b border-ink/[0.06]">
   <div class="max-w-7xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between">
     <a href="#" class="flex items-center gap-2.5">
-      <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
-        <circle cx="20" cy="20" r="19" stroke="#1F5C52" stroke-width="1.4"/>
-        <path d="M13 22c0-4 3-7 7-7s7 3 7 7-3 5-7 5-7-1-7-5Z" fill="#1F5C52"/>
-        <circle cx="14.5" cy="14" r="2.1" fill="#1F5C52"/>
-        <circle cx="19.5" cy="11.5" r="2.1" fill="#1F5C52"/>
-        <circle cx="25.5" cy="14" r="2.1" fill="#1F5C52"/>
+      <svg width="34" height="34" viewBox="0 0 64 64" fill="none">
+        <circle cx="32" cy="32" r="30.4" stroke="#1F5C52" stroke-width="2.25"/>
+        <g fill="#1F5C52" transform="translate(10 10) scale(.69)">
+          <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+          <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+          <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+          <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+          <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+        </g>
       </svg>
       <span class="text-xl font-extrabold tracking-tight text-forestDark">پاستیل</span>
     </a>
@@ -119,12 +297,63 @@
 
 <!-- ===================== HERO ===================== -->
 <section class="relative overflow-hidden">
+  <div aria-hidden="true" class="pointer-events-none absolute inset-0">
+    <div class="paw-bg-bubble" style="top: 48px; right: 4%; width: 190px; height: 190px;"></div>
+    <div class="paw-bg-bubble" style="bottom: 28px; left: 6%; width: 130px; height: 130px; background: radial-gradient(circle, rgba(239,214,203,.92) 0%, rgba(239,214,203,0) 72%);"></div>
+
+    <svg class="hero-paw hero-paw--one soft-paw" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+      <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+    </svg>
+
+    <svg class="hero-paw hero-paw--two soft-paw-nude" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+      <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+    </svg>
+
+    <svg class="hero-paw hero-paw--three soft-paw" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+      <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+    </svg>
+
+    <svg class="paw-section-cloud soft-paw" style="top: 16%; left: 16%; width: 40px; height: 40px; transform: rotate(-16deg);" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+      <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+    </svg>
+
+    <svg class="paw-section-cloud soft-paw-nude" style="bottom: 20%; right: 46%; width: 52px; height: 52px; transform: rotate(14deg);" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+      <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+    </svg>
+  </div>
+
   <div class="max-w-7xl mx-auto px-6 lg:px-10 pt-14 lg:pt-20 pb-10 grid lg:grid-cols-2 gap-12 items-center">
 
     <div class="order-2 lg:order-1">
-      <div class="inline-flex items-center gap-2 bg-mist text-forest text-xs font-bold px-3.5 py-1.5 rounded-full mb-6">
-        <span class="w-1.5 h-1.5 rounded-full bg-lagoon animate-pulse"></span>
-        همین حالا باز و پذیرای حیوان خانگی شماست
+      <div class="inline-flex items-center gap-2.5 bg-mist text-forest text-xs font-bold px-3.5 py-1.5 rounded-full mb-6 paw-chip">
+        <svg viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+          <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+        </svg>
+        همین حالا برای رزرو آنلاین آماده است
       </div>
 
       <h1 class="text-4xl sm:text-5xl lg:text-[3.4rem] font-extrabold leading-[1.25] text-forestDark">
@@ -174,6 +403,14 @@
     <!-- SIGNATURE ELEMENT: heartbeat line that resolves into a paw print -->
     <div class="order-1 lg:order-2 relative">
       <div class="relative bg-white rounded-[2rem] border border-ink/[0.06] shadow-xl shadow-forest/[0.06] p-8 sm:p-10 overflow-hidden">
+        <div class="hero-card-glow" aria-hidden="true"></div>
+        <svg class="absolute top-5 left-5 w-14 h-14 text-sage/20" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+          <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+        </svg>
         <svg viewBox="0 0 480 200" class="w-full h-auto" fill="none" aria-label="نمودار متحرک ضربان قلب">
           <path
             class="heartbeat-path-base"
@@ -284,6 +521,15 @@
     <p class="text-lagoon font-bold text-sm mb-3">خدمات دامپزشکی</p>
     <h2 class="text-3xl sm:text-4xl font-extrabold text-forestDark leading-tight">مراقبتی کامل، از معاینه تا جراحی</h2>
     <p class="mt-4 text-ink/55 leading-8">هر خدمت را می‌توانید مستقیماً از همین صفحه رزرو کنید؛ کافی‌ست روی «دریافت نوبت» کلیک کنید.</p>
+    <div class="mt-6 paw-divider-line" aria-hidden="true">
+      <svg width="28" height="28" viewBox="0 0 64 64" fill="currentColor" class="text-sage/70">
+        <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+      </svg>
+    </div>
   </div>
 
   <div id="servicesContainer" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -293,7 +539,23 @@
 
 <!-- ===================== HOW IT WORKS ===================== -->
 <section id="how" class="bg-white border-y border-ink/[0.06]">
-  <div class="max-w-7xl mx-auto px-6 lg:px-10 py-24">
+  <div aria-hidden="true" class="pointer-events-none absolute inset-0">
+    <svg class="paw-section-cloud" style="top: 36px; right: 5%; width: 108px; height: 108px; color: rgba(246,225,231,.14); transform: rotate(-10deg);" viewBox="0 0 64 64" fill="currentColor">
+      <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+    </svg>
+    <svg class="paw-section-cloud" style="bottom: 26px; left: 6%; width: 76px; height: 76px; color: rgba(239,214,203,.16); transform: rotate(14deg);" viewBox="0 0 64 64" fill="currentColor">
+      <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+    </svg>
+  </div>
+  <div class="relative max-w-7xl mx-auto px-6 lg:px-10 py-24">
     <div class="reveal max-w-xl mx-auto text-center mb-16">
       <p class="text-lagoon font-bold text-sm mb-3">روند نوبت‌دهی</p>
       <h2 class="text-3xl sm:text-4xl font-extrabold text-forestDark leading-tight">در ۴ گام ساده، نوبت بگیرید</h2>
@@ -335,14 +597,23 @@
 <!-- ===================== DOCTORS ===================== -->
 <section id="doctors" class="max-w-7xl mx-auto px-6 lg:px-10 py-24">
   <div class="reveal max-w-xl mx-auto text-center mb-9">
-    <p class="text-lagoon font-bold text-sm mb-3">انتخاب آگاهانه</p>
+    <p class="text-lagoon font-bold text-sm mb-3">پزشکان و متخصصان</p>
     <h2 class="text-3xl sm:text-4xl font-extrabold text-forestDark leading-tight">دامپزشکان فعال در پاستیل</h2>
     <p class="mt-4 text-sm text-ink/50 leading-7">پزشک موردنظرتان را با نام پیدا کنید و مشخصات، امتیازها و نظرات مراجعین را ببینید.</p>
+    <div class="mt-6 paw-divider-line" aria-hidden="true">
+      <svg width="28" height="28" viewBox="0 0 64 64" fill="currentColor" class="text-sage/70">
+        <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+      </svg>
+    </div>
   </div>
 
   <!-- Attractive doctor search -->
   <div class="reveal max-w-2xl mx-auto mb-10">
-    <div class="relative overflow-hidden bg-white border border-forest/10 rounded-[2rem] p-5 sm:p-6 shadow-xl shadow-forest/[0.06]">
+    <div class="paw-search-shell relative overflow-hidden border border-forest/10 rounded-[2rem] p-5 sm:p-6 shadow-xl shadow-forest/[0.06]">
       <div class="absolute -top-16 -left-12 w-40 h-40 rounded-full bg-mist/80 pointer-events-none"></div>
       <div class="absolute -bottom-20 -right-16 w-48 h-48 rounded-full bg-sage/10 pointer-events-none"></div>
 
@@ -356,7 +627,16 @@
           </div>
 
           <div>
-            <p class="font-extrabold text-forestDark">پزشکت را پیدا کن</p>
+            <p class="font-extrabold text-forestDark inline-flex items-center gap-2">
+              <svg width="16" height="16" viewBox="0 0 64 64" fill="currentColor" class="text-sage" aria-hidden="true">
+                <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+              </svg>
+              پزشکت را پیدا کن
+            </p>
             <p class="text-xs text-ink/45 mt-1">نام یا بخشی از نام پزشک را بنویسید.</p>
           </div>
         </div>
@@ -398,7 +678,16 @@
 
         <div class="mt-3 flex items-center justify-between gap-3">
           <p id="homeDoctorSearchResultCount" class="text-xs text-ink/40">همه پزشکان نمایش داده می‌شوند.</p>
-          <span class="hidden sm:inline-flex text-[11px] font-bold text-forest bg-mist px-2.5 py-1 rounded-full">جست‌وجوی سریع</span>
+          <span class="hidden sm:inline-flex text-[11px] font-bold text-forest bg-mist px-2.5 py-1 rounded-full paw-chip">
+      <svg viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+        <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+      </svg>
+      جست‌وجوی سریع
+    </span>
         </div>
       </div>
     </div>
@@ -415,13 +704,30 @@
     <p class="text-sm text-ink/45 mt-2">نام را کوتاه‌تر بنویسید یا املای آن را بررسی کنید.</p>
   </div>
 
+  <div aria-hidden="true" class="pointer-events-none relative h-0">
+    <svg class="paw-section-cloud soft-paw" style="top: -12px; right: 3%; width: 66px; height: 66px; transform: rotate(-12deg);" viewBox="0 0 64 64" fill="currentColor">
+      <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+    </svg>
+    <svg class="paw-section-cloud soft-paw-nude" style="top: 240px; left: -4px; width: 54px; height: 54px; transform: rotate(10deg);" viewBox="0 0 64 64" fill="currentColor">
+      <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+    </svg>
+  </div>
+
   <div id="doctorsContainer" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
     <p class="col-span-full text-center text-ink/40">در حال بارگذاری دامپزشکان...</p>
   </div>
 </section>
 
 <!-- ===================== TESTIMONIALS ===================== -->
-<section id="testimonials" class="bg-forestDark">
+<section id="testimonials" class="relative overflow-hidden bg-forestDark">
   <div class="max-w-7xl mx-auto px-6 lg:px-10 py-24">
     <div class="reveal max-w-xl mx-auto text-center mb-14">
       <p class="text-sage font-bold text-sm mb-3">نظر مشتریان</p>
@@ -429,17 +735,38 @@
     </div>
 
     <div class="grid md:grid-cols-3 gap-5">
-      <div class="reveal bg-white/[0.06] border border-white/10 rounded-3xl p-7">
+      <div class="reveal relative bg-white/[0.06] border border-white/10 rounded-3xl p-7 overflow-hidden">
+        <svg class="paw-quote-mark" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+          <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+        </svg>
         <p class="text-white/80 leading-8 text-sm">"نوبت آنلاین گرفتن فوق‌العاده راحت بود، اصلاً منتظر تلفن نموندم. دکتر هم با حوصله معاینه کرد."</p>
         <p class="mt-5 text-sm font-bold text-white">نگار توکلی</p>
         <p class="text-xs text-white/40">صاحب گربه «میو»</p>
       </div>
-      <div class="reveal bg-white/[0.06] border border-white/10 rounded-3xl p-7">
-        <p class="text-white/80 leading-8 text-sm">"سگم نیاز به جراحی فوری داشت؛ از طریق پاستیل همان شب دامپزشک مناسب را پیدا کردم و نوبت گرفتم."</p>
+      <div class="reveal relative bg-white/[0.06] border border-white/10 rounded-3xl p-7 overflow-hidden">
+        <svg class="paw-quote-mark" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+          <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+        </svg>
+        <p class="text-white/80 leading-8 text-sm">"از طریق پاستیل خیلی راحت پزشک مناسب را پیدا کردم و بدون تماس تلفنی نوبت گرفتم. تجربه‌اش عالی بود."</p>
         <p class="mt-5 text-sm font-bold text-white">امیر حسینی</p>
         <p class="text-xs text-white/40">صاحب سگ «رکس»</p>
       </div>
-      <div class="reveal bg-white/[0.06] border border-white/10 rounded-3xl p-7">
+      <div class="reveal relative bg-white/[0.06] border border-white/10 rounded-3xl p-7 overflow-hidden">
+        <svg class="paw-quote-mark" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+          <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+        </svg>
         <p class="text-white/80 leading-8 text-sm">"یادآوری خودکار واکسن خیلی به‌دردم خورد، دیگه هیچ نوبتی رو فراموش نمی‌کنم."</p>
         <p class="mt-5 text-sm font-bold text-white">النا موسوی</p>
         <p class="text-xs text-white/40">صاحب خرگوش «بارفی»</p>
@@ -456,16 +783,30 @@
   </div>
 
   <div class="reveal space-y-3" id="faqList">
-    <div class="faq-item bg-white border border-ink/[0.06] rounded-2xl overflow-hidden">
+    <div class="faq-item relative bg-white border border-ink/[0.06] rounded-2xl overflow-hidden">
+      <svg class="faq-paw-mark" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+        <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+      </svg>
       <button class="faq-btn w-full flex items-center justify-between text-right px-6 py-5 font-bold text-forestDark">
         آیا برای نوبت‌دهی باید هزینه‌ای پرداخت کنم؟
         <svg class="faq-icon w-5 h-5 text-forest transition-transform shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="faq-panel hidden px-6 pb-5 text-sm text-ink/60 leading-7">
-        هزینه و شرایط پرداخت هر خدمت پیش از تأیید نهایی نوبت نمایش داده می‌شود.
+        هزینه و شرایط پرداخت هر خدمت پیش از تأیید نهایی نوبت به شما نمایش داده می‌شود.
       </div>
     </div>
-    <div class="faq-item bg-white border border-ink/[0.06] rounded-2xl overflow-hidden">
+    <div class="faq-item relative bg-white border border-ink/[0.06] rounded-2xl overflow-hidden">
+      <svg class="faq-paw-mark" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+        <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+      </svg>
       <button class="faq-btn w-full flex items-center justify-between text-right px-6 py-5 font-bold text-forestDark">
         چطور نوبت رزرو شده را لغو یا تغییر دهم؟
         <svg class="faq-icon w-5 h-5 text-forest transition-transform shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
@@ -474,13 +815,20 @@
         از داشبورد کاربری خود، بخش «نوبت‌های من» را باز کرده و روی گزینه لغو یا ویرایش نوبت مورد نظر کلیک کنید.
       </div>
     </div>
-    <div class="faq-item bg-white border border-ink/[0.06] rounded-2xl overflow-hidden">
+    <div class="faq-item relative bg-white border border-ink/[0.06] rounded-2xl overflow-hidden">
+      <svg class="faq-paw-mark" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+        <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+      </svg>
       <button class="faq-btn w-full flex items-center justify-between text-right px-6 py-5 font-bold text-forestDark">
         در صورت اورژانس شبانه چه کار کنم؟
         <svg class="faq-icon w-5 h-5 text-forest transition-transform shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="faq-panel hidden px-6 pb-5 text-sm text-ink/60 leading-7">
-        پاستیل خدمات اورژانسی مستقیم ارائه نمی‌دهد. در شرایط حیاتی، فوراً با نزدیک‌ترین مرکز دامپزشکی شبانه‌روزی تماس بگیرید یا مراجعه کنید.
+        پاستیل خودش مرکز درمانی نیست. برای موارد اورژانسی باید با نزدیک‌ترین مرکز دامپزشکی شبانه‌روزی تماس بگیرید یا مراجعه کنید.
       </div>
     </div>
   </div>
@@ -488,7 +836,21 @@
 
 <!-- ===================== CTA STRIP ===================== -->
 <section class="max-w-7xl mx-auto px-6 lg:px-10 pb-24">
-  <div class="reveal bg-mist rounded-[2rem] px-8 py-14 sm:py-16 text-center relative overflow-hidden">
+  <div class="reveal rounded-[2rem] px-8 py-14 sm:py-16 text-center relative overflow-hidden" style="background: linear-gradient(135deg, #E7EFE9 0%, #F6E1E7 52%, #FFF4F0 100%);">
+      <svg class="cta-paw-float one" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+        <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+      </svg>
+      <svg class="cta-paw-float two" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+        <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+      </svg>
     <h2 class="text-2xl sm:text-3xl font-extrabold text-forestDark relative z-10">همین امروز، نوبت حیوان خانگی‌تان را رزرو کنید</h2>
     <p class="mt-3 text-ink/55 relative z-10">کمتر از دو دقیقه زمان می‌برد، بدون تماس تلفنی و بدون معطلی</p>
     <a href="auth.html" class="booking-cta mt-8 inline-block bg-forest hover:bg-forestDark text-white font-bold px-9 py-4 rounded-2xl transition-all shadow-lg shadow-forest/25 relative z-10">
@@ -502,16 +864,19 @@
   <div class="max-w-7xl mx-auto px-6 lg:px-10 py-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
     <div>
       <div class="flex items-center gap-2.5 mb-4">
-        <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
-          <circle cx="20" cy="20" r="19" stroke="#7FA793" stroke-width="1.4"/>
-          <path d="M13 22c0-4 3-7 7-7s7 3 7 7-3 5-7 5-7-1-7-5Z" fill="#7FA793"/>
-          <circle cx="14.5" cy="14" r="2.1" fill="#7FA793"/>
-          <circle cx="19.5" cy="11.5" r="2.1" fill="#7FA793"/>
-          <circle cx="25.5" cy="14" r="2.1" fill="#7FA793"/>
+        <svg width="28" height="28" viewBox="0 0 64 64" fill="none">
+          <circle cx="32" cy="32" r="30.4" stroke="#7FA793" stroke-width="2.25"/>
+          <g fill="#7FA793" transform="translate(10 10) scale(.69)">
+            <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+            <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+            <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+            <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+            <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+          </g>
         </svg>
         <span class="text-lg font-extrabold text-white">پاستیل</span>
       </div>
-      <p class="text-sm leading-7">پلتفرم نوبت‌دهی دامپزشکی برای یافتن پزشک مناسب، مقایسه تجربه مراجعین و رزرو آنلاین نوبت.</p>
+      <p class="text-sm leading-7">پلتفرم نوبت‌دهی دامپزشکی برای پیدا کردن پزشک مناسب، بررسی امتیاز و نظرات کاربران و رزرو آنلاین نوبت.</p>
     </div>
     <div>
       <h4 class="text-white font-bold mb-4 text-sm">دسترسی سریع</h4>
@@ -868,8 +1233,24 @@ async function loadDoctors() {
       <article
         data-home-doctor-card="${doc.id}"
         data-doctor-search-name="${escapeReviewText(name)}"
-        class="bg-white rounded-3xl border border-ink/[0.06] p-6 text-center hover:border-forest/20 hover:shadow-xl hover:shadow-forest/[0.08] transition-all flex flex-col"
+        class="relative overflow-hidden bg-[linear-gradient(180deg,#ffffff_0%,#fff7f4_100%)] rounded-3xl border border-ink/[0.06] p-6 text-center hover:border-forest/20 hover:shadow-xl hover:shadow-forest/[0.08] transition-all flex flex-col"
       >
+        <svg class="doctor-card-paw" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+          <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+        </svg>
+
+        <svg class="doctor-card-soft-paw" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+          <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+        </svg>
+
         ${photoMarkup}
 
         <h3 class="mt-5 text-lg font-extrabold text-forestDark">
@@ -908,7 +1289,14 @@ async function loadDoctors() {
 
         ${serviceTags.length ? `
           <div class="mt-4 pt-4 border-t border-ink/[0.06]">
-            <p class="text-[11px] text-ink/35 font-bold mb-2">
+            <p class="text-[11px] text-ink/35 font-bold mb-2 inline-flex items-center justify-center gap-1.5">
+              <svg width="13" height="13" viewBox="0 0 64 64" fill="currentColor" class="text-roseDust" aria-hidden="true">
+                <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+              </svg>
               خدمات قابل ارائه
             </p>
 
@@ -1035,8 +1423,24 @@ async function loadServices() {
     ];
 
     container.innerHTML = services.map((service, i) => `
-      <div class="group bg-white rounded-3xl border border-ink/[0.06] p-7 hover:border-forest/30 hover:shadow-lg hover:shadow-forest/[0.06] transition-all">
-        <div class="w-12 h-12 rounded-2xl bg-mist flex items-center justify-center mb-5 group-hover:bg-forest transition-colors">
+      <div class="group relative overflow-hidden bg-white rounded-3xl border border-ink/[0.06] p-7 hover:border-forest/30 hover:shadow-lg hover:shadow-forest/[0.06] transition-all">
+        <svg class="paw-card-watermark" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+          <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+        </svg>
+
+        <svg class="paw-soft-bg" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+          <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+        <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+        <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+        <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+        <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+        </svg>
+
+        <div class="paw-service-icon-wrap w-12 h-12 rounded-2xl bg-blush flex items-center justify-center mb-5 group-hover:bg-forest transition-colors">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F5C52" stroke-width="1.8" class="group-hover:stroke-white transition-colors">
             ${icons[i % icons.length]}
           </svg>
