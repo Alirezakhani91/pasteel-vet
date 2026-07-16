@@ -827,7 +827,17 @@
     const allWindows = overrides || [];
 
     if (allWindows.length === 0) {
-      slotsList.innerHTML = `<p class="text-sm text-ink/40 col-span-full">دامپزشک انتخابی برای تاریخ ${JalaliUtil.formatJalaliDisplay(selectedDate, true)} نوبت‌دهی تعریف نکرده است. تاریخ دیگری را انتخاب کنید.</p>`;
+      const selectedDoctorName = escapeReviewText(
+        formatDoctorName(getDoctorFullName(selectedDoctor))
+      );
+
+      slotsList.innerHTML = `
+        <p class="text-sm text-ink/40 col-span-full leading-7">
+          ${selectedDoctorName} برای تاریخ
+          ${JalaliUtil.formatJalaliDisplay(selectedDate, true)}
+          نوبت‌دهی تعریف نکرده است. تاریخ دیگری را انتخاب کنید.
+        </p>
+      `;
       return;
     }
 
