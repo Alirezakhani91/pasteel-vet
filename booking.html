@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>رزرو نوبت | نیک‌پلاس</title>
+<title>رزرو نوبت | پاستیل</title>
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -65,7 +65,7 @@
         <circle cx="19.5" cy="11.5" r="2.1" fill="#1F5C52"/>
         <circle cx="25.5" cy="14" r="2.1" fill="#1F5C52"/>
       </svg>
-      <span class="text-lg font-extrabold tracking-tight text-forestDark">نیک‌پلاس</span>
+      <span class="text-lg font-extrabold tracking-tight text-forestDark">پاستیل</span>
     </a>
     <a href="dashboard.html" class="text-sm font-bold text-ink/50 hover:text-forest transition-colors">بازگشت به داشبورد</a>
   </div>
@@ -632,7 +632,7 @@
             <h3 class="font-extrabold text-forestDark">${name}</h3>
 
             <p class="text-xs text-forest font-bold mt-1">
-              ${doctor.specialty || 'دامپزشک نیک‌پلاس'}
+              ${doctor.specialty || 'دامپزشک'}
             </p>
 
             ${doctor.reviewCount ? `
@@ -907,7 +907,7 @@
 
         <div>
           <p class="font-extrabold text-forestDark">${doctorName}</p>
-          <p class="text-xs text-forest font-bold mt-1">${selectedDoctor.specialty || 'دامپزشک نیک‌پلاس'}</p>
+          <p class="text-xs text-forest font-bold mt-1">${selectedDoctor.specialty || 'دامپزشک'}</p>
 
           ${selectedDoctor.reviewCount ? `
             <div class="flex items-center gap-2 mt-1.5">
