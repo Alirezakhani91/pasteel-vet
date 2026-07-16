@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>همه دامپزشکان | پاستیل</title>
+
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { vazir: ['Vazirmatn', 'sans-serif'] },
+      colors: {
+        cream: '#FAF9F5',
+        ink: '#16231F',
+        forest: '#1F5C52',
+        forestDark: '#153F38',
+        sage: '#7FA793',
+        lagoon: '#4E9C93',
+        mist: '#E7EFE9',
+        coral: '#E8926A',
+        blush: '#F6E1E7',
+        nude: '#EFD6CB',
+        roseDust: '#C993A4',
+        shell: '#FFF4F0'
+      }
+    }
+  }
+}
+</script>
+
+<style>
+  * { font-family: 'Vazirmatn', sans-serif; }
+
+  .doctor-card {
+    animation: cardIn .3s ease both;
+  }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .pagination-button.active {
+    color: #fff;
+    background: #1F5C52;
+    border-color: #1F5C52;
+  }
+
+  .pagination-button:disabled {
+    opacity: .35;
+    cursor: not-allowed;
+  }
+</style>
+</head>
+
+<body class="bg-cream text-ink antialiased">
+
+<header class="bg-white/90 backdrop-blur border-b border-ink/[0.06] sticky top-0 z-40">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between gap-5">
+    <a href="index.html" class="flex items-center gap-2.5">
+      <span class="w-10 h-10 rounded-2xl bg-blush text-forest flex items-center justify-center">
+        <svg width="25" height="25" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+          <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+          <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+          <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+          <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+          <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+        </svg>
+      </span>
+      <span class="text-xl font-extrabold text-forestDark">پاستیل</span>
+    </a>
+
+    <div class="flex items-center gap-3">
+      <a href="index.html" class="hidden sm:inline-flex text-sm font-bold text-ink/55 hover:text-forest">
+        صفحه اصلی
+      </a>
+
+      <a
+        id="accountLink"
+        href="auth.html"
+        class="bg-forest hover:bg-forestDark text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-colors"
+      >
+        ورود
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-6 lg:px-10 py-14 lg:py-20">
+
+  <section class="text-center max-w-2xl mx-auto">
+    <p class="text-sm font-bold text-lagoon mb-3">انتخاب آگاهانه</p>
+    <h1 class="text-3xl sm:text-4xl font-extrabold text-forestDark">
+      همه دامپزشکان فعال در پاستیل
+    </h1>
+    <p class="text-sm text-ink/50 leading-7 mt-4">
+      نام یا تخصص پزشک را جست‌وجو کنید و از میان دامپزشکان فعال، گزینه مناسب را انتخاب کنید.
+    </p>
+  </section>
+
+  <section class="max-w-3xl mx-auto mt-10">
+    <div class="relative overflow-hidden bg-white border border-forest/10 rounded-[2rem] p-5 sm:p-6 shadow-xl shadow-forest/[0.06]">
+      <div aria-hidden="true" class="absolute -top-16 -left-12 w-40 h-40 rounded-full bg-blush/70"></div>
+      <div aria-hidden="true" class="absolute -bottom-20 -right-16 w-48 h-48 rounded-full bg-nude/55"></div>
+
+      <div class="relative">
+        <label for="allDoctorsSearchInput" class="block text-sm font-extrabold text-forestDark mb-3">
+          جست‌وجوی دامپزشک
+        </label>
+
+        <div class="relative">
+          <input
+            id="allDoctorsSearchInput"
+            type="search"
+            autocomplete="off"
+            placeholder="نام یا تخصص دامپزشک..."
+            class="w-full bg-cream/70 border border-ink/10 rounded-2xl pr-12 pl-12 py-4 text-sm text-forestDark outline-none focus:bg-white focus:border-forest focus:ring-4 focus:ring-forest/10 transition-all"
+          >
+
+          <svg class="absolute right-4 top-1/2 -translate-y-1/2 text-forest pointer-events-none" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="7"/>
+            <path d="M20 20l-3.5-3.5"/>
+          </svg>
+
+          <button
+            id="clearAllDoctorsSearchBtn"
+            type="button"
+            class="hidden absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-white text-ink/40 hover:bg-forest hover:text-white transition-colors items-center justify-center"
+            aria-label="پاک کردن جست‌وجو"
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round">
+              <path d="M18 6 6 18M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        <p id="allDoctorsResultCount" class="text-xs text-ink/40 mt-3">
+          در حال دریافت دامپزشکان...
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div id="allDoctorsLoading" class="py-20 text-center">
+    <div class="w-10 h-10 mx-auto rounded-full border-4 border-mist border-t-forest animate-spin"></div>
+    <p class="text-sm text-ink/40 mt-4">در حال بارگذاری دامپزشکان...</p>
+  </div>
+
+  <section
+    id="allDoctorsContainer"
+    class="hidden mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
+  ></section>
+
+  <div id="allDoctorsEmpty" class="hidden max-w-xl mx-auto mt-12 bg-white border border-ink/[0.06] rounded-3xl p-10 text-center">
+    <p class="font-extrabold text-forestDark">دامپزشکی پیدا نشد</p>
+    <p class="text-sm text-ink/45 mt-2">عبارت جست‌وجو را کوتاه‌تر یا متفاوت وارد کنید.</p>
+  </div>
+
+  <div id="allDoctorsError" class="hidden max-w-xl mx-auto mt-12 text-sm text-red-600 bg-red-50 rounded-xl px-5 py-4 text-center"></div>
+
+  <nav id="allDoctorsPagination" class="hidden mt-10 flex flex-wrap items-center justify-center gap-2" aria-label="صفحه‌بندی دامپزشکان"></nav>
+</main>
+
+<footer class="border-t border-ink/[0.06] bg-white mt-12">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 py-8 text-center text-xs text-ink/40">
+    © ۱۴۰۴ پاستیل، پلتفرم نوبت‌دهی دامپزشکی
+  </div>
+</footer>
+
+<script src="supabase-client.js"></script>
+
+<script>
+  const DOCTORS_PER_PAGE = 12;
+
+  let allDoctors = [];
+  let filteredDoctors = [];
+  let currentPage = 1;
+  let bookingTarget = 'auth.html';
+
+  function escapeText(value) {
+    return String(value || '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+  }
+
+  function normalizeSearch(value) {
+    return String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/^دکتر\s+/, '')
+      .replace(/[\u200c\u200f\u202a-\u202e]/g, '')
+      .replace(/ي/g, 'ی')
+      .replace(/ك/g, 'ک')
+      .replace(/ة/g, 'ه')
+      .replace(/\s+/g, ' ');
+  }
+
+  function formatDoctorName(value) {
+    const name = String(value || '').trim();
+    if (!name) return 'دامپزشک';
+    return name.startsWith('دکتر') ? name : `دکتر ${name}`;
+  }
+
+  function getInitials(value) {
+    const cleanName = String(value || '')
+      .replace(/^دکتر\s*/, '')
+      .trim();
+
+    if (!cleanName) return 'د';
+
+    return cleanName
+      .split(/\s+/)
+      .slice(0, 2)
+      .map(part => part.charAt(0))
+      .join('');
+  }
+
+  function renderStars(rating) {
+    const rounded = Math.round(Number(rating || 0));
+
+    return Array.from({ length: 5 }, (_, index) => (
+      `<span class="${index < rounded ? 'text-amber-400' : 'text-ink/10'}">★</span>`
+    )).join('');
+  }
+
+  async function prepareAccountAndBookingLinks() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+
+    if (!session) return;
+
+    bookingTarget = 'booking.html';
+
+    const { data: profile } = await supabaseClient
+      .from('profiles')
+      .select('role')
+      .eq('id', session.user.id)
+      .maybeSingle();
+
+    const accountLink = document.getElementById('accountLink');
+
+    accountLink.href =
+      profile?.role === 'admin' || profile?.role === 'doctor'
+        ? 'admin-dashboard.html'
+        : 'dashboard.html';
+
+    accountLink.textContent = 'حساب من';
+  }
+
+  async function loadAllDoctors() {
+    const loading = document.getElementById('allDoctorsLoading');
+    const errorBox = document.getElementById('allDoctorsError');
+
+    const { data, error } = await supabaseClient
+      .from('doctors')
+      .select(`
+        id,
+        specialty,
+        bio,
+        photo_url,
+        city,
+        experience_years,
+        profiles ( full_name ),
+        doctor_services ( services ( title ) )
+      `);
+
+    loading.classList.add('hidden');
+
+    if (error) {
+      console.error(error);
+      errorBox.textContent = 'خطا در دریافت فهرست دامپزشکان.';
+      errorBox.classList.remove('hidden');
+      return;
+    }
+
+    allDoctors = data || [];
+    filteredDoctors = [...allDoctors];
+
+    const params = new URLSearchParams(window.location.search);
+    const initialQuery = params.get('q') || '';
+
+    document.getElementById('allDoctorsSearchInput').value = initialQuery;
+
+    applyDoctorsSearch();
+  }
+
+  function applyDoctorsSearch() {
+    const input = document.getElementById('allDoctorsSearchInput');
+    const clearButton = document.getElementById('clearAllDoctorsSearchBtn');
+    const query = normalizeSearch(input.value);
+
+    filteredDoctors = allDoctors.filter(doctor => {
+      const name = normalizeSearch(doctor.profiles?.full_name);
+      const specialty = normalizeSearch(doctor.specialty);
+      const services = normalizeSearch(
+        (doctor.doctor_services || [])
+          .map(item => item.services?.title)
+          .filter(Boolean)
+          .join(' ')
+      );
+
+      return !query ||
+        name.includes(query) ||
+        specialty.includes(query) ||
+        services.includes(query);
+    });
+
+    clearButton.classList.toggle('hidden', !query);
+    clearButton.classList.toggle('flex', Boolean(query));
+
+    currentPage = 1;
+    renderDoctorsPage();
+  }
+
+  async function renderDoctorsPage() {
+    const container = document.getElementById('allDoctorsContainer');
+    const empty = document.getElementById('allDoctorsEmpty');
+    const pagination = document.getElementById('allDoctorsPagination');
+    const resultCount = document.getElementById('allDoctorsResultCount');
+
+    resultCount.textContent =
+      `${filteredDoctors.length.toLocaleString('fa-IR')} دامپزشک پیدا شد.`;
+
+    if (!filteredDoctors.length) {
+      container.classList.add('hidden');
+      empty.classList.remove('hidden');
+      pagination.classList.add('hidden');
+      return;
+    }
+
+    empty.classList.add('hidden');
+    container.classList.remove('hidden');
+
+    const totalPages = Math.max(
+      1,
+      Math.ceil(filteredDoctors.length / DOCTORS_PER_PAGE)
+    );
+
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    const pageDoctors = filteredDoctors.slice(
+      (currentPage - 1) * DOCTORS_PER_PAGE,
+      currentPage * DOCTORS_PER_PAGE
+    );
+
+    const doctorIds = pageDoctors.map(doctor => doctor.id);
+
+    const { data: reviews, error: reviewsError } = await supabaseClient
+      .from('doctor_reviews')
+      .select('doctor_id, rating')
+      .in('doctor_id', doctorIds);
+
+    if (reviewsError) {
+      console.error('Reviews error:', reviewsError);
+    }
+
+    const reviewMap = new Map();
+
+    (reviews || []).forEach(review => {
+      const key = String(review.doctor_id);
+
+      if (!reviewMap.has(key)) {
+        reviewMap.set(key, { count: 0, total: 0 });
+      }
+
+      const stats = reviewMap.get(key);
+      stats.count += 1;
+      stats.total += Number(review.rating || 0);
+    });
+
+    container.innerHTML = pageDoctors.map((doctor, index) => {
+      const name = formatDoctorName(doctor.profiles?.full_name);
+      const initials = getInitials(doctor.profiles?.full_name);
+      const stats = reviewMap.get(String(doctor.id)) || { count: 0, total: 0 };
+      const average = stats.count ? stats.total / stats.count : 0;
+
+      const services = (doctor.doctor_services || [])
+        .map(item => item.services?.title)
+        .filter(Boolean)
+        .slice(0, 3);
+
+      const photo = doctor.photo_url
+        ? `
+          <img
+            src="${escapeText(doctor.photo_url)}"
+            alt="عکس ${escapeText(name)}"
+            loading="lazy"
+            class="w-28 h-28 mx-auto rounded-full object-cover border-4 border-mist shadow-sm"
+            onerror="this.classList.add('hidden');this.nextElementSibling.classList.remove('hidden');this.nextElementSibling.classList.add('flex');"
+          >
+          <div class="hidden w-28 h-28 mx-auto rounded-full bg-mist items-center justify-center text-2xl font-extrabold text-forest">
+            ${escapeText(initials)}
+          </div>
+        `
+        : `
+          <div class="w-28 h-28 mx-auto rounded-full bg-mist flex items-center justify-center text-2xl font-extrabold text-forest">
+            ${escapeText(initials)}
+          </div>
+        `;
+
+      return `
+        <article
+          class="doctor-card relative overflow-hidden bg-[linear-gradient(180deg,#ffffff_0%,#fff7f4_100%)] rounded-3xl border border-ink/[0.06] p-6 text-center hover:border-forest/20 hover:shadow-xl hover:shadow-forest/[0.08] transition-all flex flex-col"
+          style="animation-delay:${index * 35}ms"
+        >
+          <svg class="absolute top-4 left-4 w-12 h-12 text-blush" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+            <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+            <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+            <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+            <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+            <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+          </svg>
+
+          ${photo}
+
+          <h2 class="mt-5 text-lg font-extrabold text-forestDark">
+            ${escapeText(name)}
+          </h2>
+
+          <p class="text-sm font-bold text-forest mt-1">
+            ${escapeText(doctor.specialty || 'دامپزشک')}
+          </p>
+
+          ${
+            doctor.city || doctor.experience_years
+              ? `
+                <p class="text-xs text-ink/40 mt-2">
+                  ${doctor.city ? escapeText(doctor.city) : ''}
+                  ${doctor.city && doctor.experience_years ? ' • ' : ''}
+                  ${doctor.experience_years ? `${Number(doctor.experience_years).toLocaleString('fa-IR')} سال سابقه` : ''}
+                </p>
+              `
+              : ''
+          }
+
+          <div class="mt-3 flex items-center justify-center gap-2">
+            <div class="flex items-center gap-0.5 text-sm" dir="ltr">
+              ${renderStars(average)}
+            </div>
+
+            <span class="text-xs font-extrabold text-forestDark">
+              ${stats.count ? average.toFixed(1) : '—'}
+            </span>
+
+            <span class="text-[11px] text-ink/40">
+              (${stats.count.toLocaleString('fa-IR')} نظر)
+            </span>
+          </div>
+
+          ${
+            doctor.bio
+              ? `<p class="text-sm text-ink/55 leading-7 mt-4 line-clamp-3">${escapeText(doctor.bio)}</p>`
+              : `<p class="text-sm text-ink/40 leading-7 mt-4">اطلاعات تکمیلی این دامپزشک به‌زودی ثبت می‌شود.</p>`
+          }
+
+          ${
+            services.length
+              ? `
+                <div class="mt-4 pt-4 border-t border-ink/[0.06]">
+                  <div class="flex flex-wrap justify-center gap-1.5">
+                    ${services.map(title => `
+                      <span class="text-[11px] font-bold text-forest bg-mist px-2.5 py-1 rounded-full">
+                        ${escapeText(title)}
+                      </span>
+                    `).join('')}
+                  </div>
+                </div>
+              `
+              : ''
+          }
+
+          <a
+            href="${bookingTarget}"
+            class="mt-auto pt-5 inline-flex items-center justify-center gap-2 bg-forest hover:bg-forestDark text-white text-sm font-bold px-5 py-3 rounded-xl transition-colors"
+          >
+            دریافت نوبت
+          </a>
+        </article>
+      `;
+    }).join('');
+
+    renderPagination(totalPages);
+  }
+
+  function renderPagination(totalPages) {
+    const pagination = document.getElementById('allDoctorsPagination');
+
+    if (totalPages <= 1) {
+      pagination.classList.add('hidden');
+      pagination.innerHTML = '';
+      return;
+    }
+
+    pagination.classList.remove('hidden');
+
+    const pageButtons = Array.from(
+      { length: totalPages },
+      (_, index) => index + 1
+    );
+
+    pagination.innerHTML = `
+      <button
+        type="button"
+        data-page-action="prev"
+        class="pagination-button w-10 h-10 rounded-xl border border-ink/10 bg-white text-forest font-bold"
+        ${currentPage === 1 ? 'disabled' : ''}
+      >
+        ‹
+      </button>
+
+      ${pageButtons.map(page => `
+        <button
+          type="button"
+          data-page-number="${page}"
+          class="pagination-button ${page === currentPage ? 'active' : ''} min-w-10 h-10 px-3 rounded-xl border border-ink/10 bg-white text-ink/55 text-xs font-bold"
+        >
+          ${page.toLocaleString('fa-IR')}
+        </button>
+      `).join('')}
+
+      <button
+        type="button"
+        data-page-action="next"
+        class="pagination-button w-10 h-10 rounded-xl border border-ink/10 bg-white text-forest font-bold"
+        ${currentPage === totalPages ? 'disabled' : ''}
+      >
+        ›
+      </button>
+    `;
+
+    pagination.querySelectorAll('[data-page-number]').forEach(button => {
+      button.addEventListener('click', () => {
+        currentPage = Number(button.dataset.pageNumber);
+        renderDoctorsPage();
+        window.scrollTo({ top: 300, behavior: 'smooth' });
+      });
+    });
+
+    pagination.querySelector('[data-page-action="prev"]').addEventListener(
+      'click',
+      () => {
+        if (currentPage <= 1) return;
+        currentPage -= 1;
+        renderDoctorsPage();
+        window.scrollTo({ top: 300, behavior: 'smooth' });
+      }
+    );
+
+    pagination.querySelector('[data-page-action="next"]').addEventListener(
+      'click',
+      () => {
+        if (currentPage >= totalPages) return;
+        currentPage += 1;
+        renderDoctorsPage();
+        window.scrollTo({ top: 300, behavior: 'smooth' });
+      }
+    );
+  }
+
+  document.getElementById('allDoctorsSearchInput').addEventListener(
+    'input',
+    applyDoctorsSearch
+  );
+
+  document.getElementById('clearAllDoctorsSearchBtn').addEventListener(
+    'click',
+    () => {
+      const input = document.getElementById('allDoctorsSearchInput');
+      input.value = '';
+      applyDoctorsSearch();
+      input.focus();
+    }
+  );
+
+  (async function init() {
+    await prepareAccountAndBookingLinks();
+    await loadAllDoctors();
+  })();
+</script>
+
+</body>
+</html>
