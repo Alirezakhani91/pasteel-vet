@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>قوانین و مقررات | پاستیل</title>
+
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#F6E1E7">
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        vazir: ['Vazirmatn', 'sans-serif']
+      },
+      colors: {
+        cream: '#FAF9F5',
+        ink: '#16231F',
+        forest: '#1F5C52',
+        forestDark: '#153F38',
+        sage: '#7FA793',
+        lagoon: '#4E9C93',
+        mist: '#E7EFE9',
+        coral: '#E8926A',
+        blush: '#F6E1E7',
+        nude: '#EFD6CB',
+        shell: '#FFF4F0'
+      }
+    }
+  }
+}
+</script>
+
+<style>
+  * {
+    font-family: 'Vazirmatn', sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  .terms-section {
+    scroll-margin-top: 110px;
+  }
+</style>
+</head>
+
+<body class="bg-cream text-ink antialiased">
+
+<header class="sticky top-0 z-40 bg-white/90 backdrop-blur-xl border-b border-ink/[0.06]">
+  <div class="max-w-6xl mx-auto px-5 sm:px-7 lg:px-10 h-20 flex items-center justify-between gap-5">
+    <a href="index.html" class="flex items-center gap-2.5" aria-label="صفحه اصلی پاستیل">
+      <span class="w-11 h-11 rounded-2xl bg-blush text-forest flex items-center justify-center">
+        <svg width="27" height="27" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+          <ellipse cx="16.5" cy="21.5" rx="6.5" ry="8.8" transform="rotate(-20 16.5 21.5)"/>
+          <ellipse cx="28.5" cy="14.5" rx="6.6" ry="9" transform="rotate(-7 28.5 14.5)"/>
+          <ellipse cx="42" cy="15.5" rx="6.6" ry="9" transform="rotate(8 42 15.5)"/>
+          <ellipse cx="51.5" cy="25" rx="6.3" ry="8.5" transform="rotate(21 51.5 25)"/>
+          <path d="M16.5 47.5C16.5 41.3 19.7 35.1 25 31.3C27.7 29.4 30 30.6 32 33.5C34 30.6 36.3 29.4 39 31.3C44.3 35.1 47.5 41.3 47.5 47.5C47.5 53.8 42.5 56.6 37.5 54.7C33.8 53.3 30.2 53.3 26.5 54.7C21.5 56.6 16.5 53.8 16.5 47.5Z"/>
+        </svg>
+      </span>
+
+      <div>
+        <p class="text-lg font-extrabold text-forestDark">پاستیل</p>
+        <p class="text-[10px] text-ink/40 mt-0.5">پلتفرم نوبت‌دهی دامپزشکی</p>
+      </div>
+    </a>
+
+    <button
+      type="button"
+      onclick="window.close(); if (!window.closed) history.back();"
+      class="inline-flex items-center gap-2 text-sm font-bold text-forest hover:text-forestDark"
+    >
+      بازگشت
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+        <path d="m9 18 6-6-6-6"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<main class="max-w-6xl mx-auto px-5 sm:px-7 lg:px-10 py-12 lg:py-16">
+
+  <section class="relative overflow-hidden bg-white border border-ink/[0.06] rounded-[2rem] p-7 sm:p-10 lg:p-12 shadow-xl shadow-forest/[0.05]">
+    <div aria-hidden="true" class="absolute -top-24 -left-20 w-64 h-64 rounded-full bg-blush/60"></div>
+    <div aria-hidden="true" class="absolute -bottom-28 -right-24 w-72 h-72 rounded-full bg-nude/45"></div>
+
+    <div class="relative max-w-3xl">
+      <span class="inline-flex items-center gap-2 bg-mist text-forest text-xs font-extrabold px-4 py-2 rounded-full">
+        سند رسمی استفاده از پلتفرم
+      </span>
+
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-forestDark mt-5">
+        قوانین و مقررات استفاده از پاستیل
+      </h1>
+
+      <p class="text-sm sm:text-base text-ink/55 leading-8 mt-5">
+        استفاده از وب‌سایت، ایجاد حساب کاربری، ثبت درخواست عضویت دامپزشک یا دریافت نوبت
+        به‌معنای مطالعه و پذیرش مفاد این سند است.
+      </p>
+
+      <p class="text-xs text-ink/40 mt-4">
+        آخرین به‌روزرسانی: تیر ۱۴۰۵
+      </p>
+    </div>
+  </section>
+
+  <div class="grid lg:grid-cols-[280px_minmax(0,1fr)] gap-7 mt-8">
+
+    <aside class="lg:sticky lg:top-28 lg:self-start bg-white border border-ink/[0.06] rounded-3xl p-5">
+      <p class="text-sm font-extrabold text-forestDark mb-4">فهرست مطالب</p>
+
+      <nav class="space-y-1.5 text-sm">
+        <a href="#platform" class="block px-3 py-2 rounded-xl text-ink/55 hover:bg-mist hover:text-forest">۱. ماهیت پاستیل</a>
+        <a href="#acceptance" class="block px-3 py-2 rounded-xl text-ink/55 hover:bg-mist hover:text-forest">۲. پذیرش قوانین</a>
+        <a href="#accounts" class="block px-3 py-2 rounded-xl text-ink/55 hover:bg-mist hover:text-forest">۳. حساب کاربری</a>
+        <a href="#veterinarians" class="block px-3 py-2 rounded-xl text-ink/55 hover:bg-mist hover:text-forest">۴. عضویت دامپزشکان</a>
+        <a href="#appointments" class="block px-3 py-2 rounded-xl text-ink/55 hover:bg-mist hover:text-forest">۵. نوبت‌ها و لغو</a>
+        <a href="#home-visit" class="block px-3 py-2 rounded-xl text-ink/55 hover:bg-mist hover:text-forest">۶. ویزیت در منزل</a>
+        <a href="#emergency" class="block px-3 py-2 rounded-xl text-ink/55 hover:bg-mist hover:text-forest">۷. شرایط اورژانسی</a>
+        <a href="#payments" class="block px-3 py-2 rounded-xl text-ink/55 hover:bg-mist hover:text-forest">۸. هزینه و پرداخت</a>
+        <a href="#conduct" class="block px-3 py-2 rounded-xl text-ink/55 hover:bg-mist hover:text-forest">۹. رفتار مجاز</a>
+        <a href="#reviews" class="block px-3 py-2 rounded-xl text-ink/55 hover:bg-mist hover:text-forest">۱۰. نظرات کاربران</a>
+        <a href="#privacy" class="block px-3 py-2 rounded-xl text-ink/55 hover:bg-mist hover:text-forest">۱۱. اطلاعات و حریم خصوصی</a>
+        <a href="#suspension" class="block px-3 py-2 rounded-xl text-ink/55 hover:bg-mist hover:text-forest">۱۲. تعلیق حساب</a>
+        <a href="#changes" class="block px-3 py-2 rounded-xl text-ink/55 hover:bg-mist hover:text-forest">۱۳. تغییر قوانین</a>
+        <a href="#contact" class="block px-3 py-2 rounded-xl text-ink/55 hover:bg-mist hover:text-forest">۱۴. ارتباط با پاستیل</a>
+      </nav>
+    </aside>
+
+    <article class="bg-white border border-ink/[0.06] rounded-3xl px-6 sm:px-8 lg:px-10 py-8">
+
+      <section id="platform" class="terms-section">
+        <h2 class="text-xl font-extrabold text-forestDark">۱. ماهیت پاستیل</h2>
+
+        <div class="mt-4 text-sm text-ink/60 leading-8 space-y-3">
+          <p>
+            پاستیل یک پلتفرم آنلاین برای معرفی دامپزشکان مستقل، نمایش خدمات قابل ارائه
+            و هماهنگی نوبت میان سرپرستان حیوانات خانگی و دامپزشکان فعال در پلتفرم است.
+          </p>
+
+          <p>
+            پاستیل کلینیک، بیمارستان یا مرکز درمانی دامپزشکی نیست و دامپزشکان فعال در آن
+            کارمند یا نماینده درمانی پاستیل محسوب نمی‌شوند. تشخیص، تجویز، درمان و تصمیم‌های
+            حرفه‌ای مستقیماً بر عهده دامپزشک ارائه‌دهنده خدمت است.
+          </p>
+        </div>
+      </section>
+
+      <hr class="my-8 border-ink/[0.06]">
+
+      <section id="acceptance" class="terms-section">
+        <h2 class="text-xl font-extrabold text-forestDark">۲. پذیرش قوانین</h2>
+
+        <div class="mt-4 text-sm text-ink/60 leading-8 space-y-3">
+          <p>
+            ایجاد حساب، ثبت درخواست عضویت دامپزشک، رزرو نوبت یا ادامه استفاده از پاستیل
+            به‌معنای پذیرش این قوانین است.
+          </p>
+
+          <p>
+            کاربر مسئول است پیش از استفاده از خدمات، متن این صفحه را مطالعه کند. در صورت
+            نپذیرفتن هر بخش از قوانین، نباید از خدمات پلتفرم استفاده شود.
+          </p>
+        </div>
+      </section>
+
+      <hr class="my-8 border-ink/[0.06]">
+
+      <section id="accounts" class="terms-section">
+        <h2 class="text-xl font-extrabold text-forestDark">۳. حساب کاربری و صحت اطلاعات</h2>
+
+        <ul class="mt-4 text-sm text-ink/60 leading-8 list-disc pr-5 space-y-2">
+          <li>اطلاعات ثبت‌شده باید صحیح، کامل و متعلق به صاحب حساب باشد.</li>
+          <li>استفاده از اطلاعات جعلی، شماره موبایل دیگران یا جعل هویت ممنوع است.</li>
+          <li>حفظ رمز عبور و جلوگیری از دسترسی دیگران به حساب بر عهده کاربر است.</li>
+          <li>در صورت تغییر اطلاعات مهم، کاربر باید آن‌ها را در اولین فرصت به‌روزرسانی کند.</li>
+          <li>هر فعالیت انجام‌شده از طریق حساب، تا زمان اعلام سوءاستفاده، منتسب به صاحب حساب است.</li>
+        </ul>
+      </section>
+
+      <hr class="my-8 border-ink/[0.06]">
+
+      <section id="veterinarians" class="terms-section">
+        <h2 class="text-xl font-extrabold text-forestDark">۴. ثبت‌نام و فعالیت دامپزشکان</h2>
+
+        <div class="mt-4 text-sm text-ink/60 leading-8 space-y-3">
+          <p>
+            درخواست عضویت دامپزشک تنها پس از بررسی اطلاعات حرفه‌ای و تأیید پاستیل فعال می‌شود.
+            ثبت درخواست به‌تنهایی هیچ حق قطعی برای فعال‌شدن حساب ایجاد نمی‌کند.
+          </p>
+
+          <p>دامپزشک متقاضی متعهد می‌شود:</p>
+
+          <ul class="list-disc pr-5 space-y-2">
+            <li>نام، شماره نظام دامپزشکی، تخصص، سابقه و محل فعالیت خود را صحیح اعلام کند.</li>
+            <li>فقط خدماتی را انتخاب کند که صلاحیت، امکان و توانایی حرفه‌ای ارائه آن‌ها را دارد.</li>
+            <li>استانداردهای حرفه‌ای، اخلاقی و محرمانگی اطلاعات مراجعان را رعایت کند.</li>
+            <li>در صورت تعلیق، لغو یا تغییر وضعیت مجوز حرفه‌ای، فوراً پاستیل را مطلع کند.</li>
+            <li>برنامه حضور و زمان‌های قابل رزرو را دقیق و به‌روز نگه دارد.</li>
+          </ul>
+
+          <p>
+            پاستیل می‌تواند برای بررسی صحت اطلاعات، مدارک تکمیلی درخواست کند یا تا پایان بررسی،
+            فعال‌سازی حساب را به تعویق بیندازد.
+          </p>
+        </div>
+      </section>
+
+      <hr class="my-8 border-ink/[0.06]">
+
+      <section id="appointments" class="terms-section">
+        <h2 class="text-xl font-extrabold text-forestDark">۵. رزرو، تغییر و لغو نوبت</h2>
+
+        <ul class="mt-4 text-sm text-ink/60 leading-8 list-disc pr-5 space-y-2">
+          <li>نوبت بر اساس زمان‌های اعلام‌شده توسط دامپزشک ثبت می‌شود.</li>
+          <li>ثبت نوبت، جایگزین مراجعه فوری در شرایط اضطراری نیست.</li>
+          <li>کاربر باید اطلاعات حیوان و دلیل مراجعه را تا حد امکان صحیح اعلام کند.</li>
+          <li>در صورت نیاز به تغییر یا لغو، کاربر و دامپزشک باید در سریع‌ترین زمان اقدام کنند.</li>
+          <li>تأخیر، عدم حضور یا لغو مکرر می‌تواند موجب محدودیت موقت حساب شود.</li>
+          <li>ممکن است زمان نوبت به دلایل حرفه‌ای یا شرایط پیش‌بینی‌نشده تغییر کند.</li>
+        </ul>
+      </section>
+
+      <hr class="my-8 border-ink/[0.06]">
+
+      <section id="home-visit" class="terms-section">
+        <h2 class="text-xl font-extrabold text-forestDark">۶. ویزیت در منزل</h2>
+
+        <ul class="mt-4 text-sm text-ink/60 leading-8 list-disc pr-5 space-y-2">
+          <li>کاربر باید نشانی، شماره تماس و شرایط محل مراجعه را دقیق اعلام کند.</li>
+          <li>فراهم‌کردن محیط امن برای حیوان، دامپزشک و همراهان بر عهده درخواست‌کننده است.</li>
+          <li>دامپزشک می‌تواند در صورت نامناسب‌بودن شرایط، خطر ایمنی یا نیاز به تجهیزات کلینیکی، ارائه خدمت در منزل را متوقف و مراجعه به مرکز درمانی را توصیه کند.</li>
+          <li>محدوده جغرافیایی، زمان حضور و هزینه احتمالی رفت‌وآمد باید پیش از نهایی‌شدن نوبت مشخص شود.</li>
+        </ul>
+      </section>
+
+      <hr class="my-8 border-ink/[0.06]">
+
+      <section id="emergency" class="terms-section">
+        <div class="bg-red-50 border border-red-100 rounded-2xl p-5">
+          <h2 class="text-xl font-extrabold text-red-700">۷. شرایط اورژانسی</h2>
+
+          <p class="mt-3 text-sm text-red-700/85 leading-8">
+            پاستیل سامانه امداد یا اورژانس دامپزشکی نیست. در مواردی مانند اختلال شدید تنفس،
+            خونریزی شدید، مسمومیت، تشنج مداوم، بیهوشی، آسیب جدی یا هر وضعیت تهدیدکننده زندگی،
+            منتظر دریافت نوبت آنلاین نمانید و فوراً با نزدیک‌ترین مرکز دامپزشکی مجهز یا
+            خدمات اورژانسی محل زندگی خود تماس بگیرید.
+          </p>
+        </div>
+      </section>
+
+      <hr class="my-8 border-ink/[0.06]">
+
+      <section id="payments" class="terms-section">
+        <h2 class="text-xl font-extrabold text-forestDark">۸. هزینه، بیعانه و پرداخت</h2>
+
+        <div class="mt-4 text-sm text-ink/60 leading-8 space-y-3">
+          <p>
+            در صورت فعال‌بودن پرداخت آنلاین، مبلغ قابل پرداخت، بیعانه یا هزینه‌های مرتبط
+            پیش از تأیید نهایی نوبت به کاربر نمایش داده می‌شود.
+          </p>
+
+          <p>
+            شرایط بازگشت وجه، لغو یا کسر هزینه بر اساس نوع خدمت و سیاست اعلام‌شده هنگام
+            رزرو اجرا می‌شود. هزینه‌های درمانی خارج از پلتفرم باید مستقیماً میان دامپزشک
+            و مراجعه‌کننده شفاف‌سازی شود.
+          </p>
+        </div>
+      </section>
+
+      <hr class="my-8 border-ink/[0.06]">
+
+      <section id="conduct" class="terms-section">
+        <h2 class="text-xl font-extrabold text-forestDark">۹. استفاده مجاز و رفتار کاربران</h2>
+
+        <p class="mt-4 text-sm text-ink/60 leading-8">
+          کاربران و دامپزشکان نباید از پاستیل برای مزاحمت، تهدید، توهین، انتشار اطلاعات
+          شخصی دیگران، تبلیغات فریبنده، جعل هویت، فعالیت غیرقانونی، آسیب به امنیت سامانه
+          یا دورزدن محدودیت‌های فنی استفاده کنند.
+        </p>
+      </section>
+
+      <hr class="my-8 border-ink/[0.06]">
+
+      <section id="reviews" class="terms-section">
+        <h2 class="text-xl font-extrabold text-forestDark">۱۰. امتیازها و نظرات</h2>
+
+        <ul class="mt-4 text-sm text-ink/60 leading-8 list-disc pr-5 space-y-2">
+          <li>نظر باید بر اساس تجربه واقعی و با لحن محترمانه ثبت شود.</li>
+          <li>انتشار اطلاعات خصوصی، ادعاهای اثبات‌نشده، توهین یا محتوای تبلیغاتی ممنوع است.</li>
+          <li>پاستیل می‌تواند محتوای مغایر با قوانین یا حقوق دیگران را بررسی، پنهان یا حذف کند.</li>
+          <li>حذف یا ویرایش محتوای نامناسب به‌معنای تأیید یا رد ادعای درمانی طرفین نیست.</li>
+        </ul>
+      </section>
+
+      <hr class="my-8 border-ink/[0.06]">
+
+      <section id="privacy" class="terms-section">
+        <h2 class="text-xl font-extrabold text-forestDark">۱۱. اطلاعات کاربران و حریم خصوصی</h2>
+
+        <div class="mt-4 text-sm text-ink/60 leading-8 space-y-3">
+          <p>
+            پاستیل اطلاعات موردنیاز برای ایجاد حساب، هماهنگی نوبت، پشتیبانی و بهبود امنیت
+            سامانه را دریافت و پردازش می‌کند.
+          </p>
+
+          <p>
+            اطلاعات ضروری نوبت ممکن است برای اجرای خدمت در اختیار دامپزشک منتخب قرار گیرد.
+            کاربران نباید اطلاعات حساس و غیرضروری را در قسمت‌های عمومی، نظرات یا توضیحات
+            قابل مشاهده برای دیگران درج کنند.
+          </p>
+        </div>
+      </section>
+
+      <hr class="my-8 border-ink/[0.06]">
+
+      <section id="suspension" class="terms-section">
+        <h2 class="text-xl font-extrabold text-forestDark">۱۲. محدودسازی یا تعلیق حساب</h2>
+
+        <p class="mt-4 text-sm text-ink/60 leading-8">
+          پاستیل می‌تواند در صورت ارائه اطلاعات نادرست، سوءاستفاده، نقض امنیت، رفتار نامناسب،
+          شکایت مستند، وضعیت نامعتبر مجوز حرفه‌ای یا نقض این مقررات، دسترسی حساب را موقتاً
+          محدود یا پس از بررسی متوقف کند.
+        </p>
+      </section>
+
+      <hr class="my-8 border-ink/[0.06]">
+
+      <section id="changes" class="terms-section">
+        <h2 class="text-xl font-extrabold text-forestDark">۱۳. تغییر یا به‌روزرسانی مقررات</h2>
+
+        <p class="mt-4 text-sm text-ink/60 leading-8">
+          ممکن است این مقررات با توسعه خدمات یا تغییر الزامات اجرایی به‌روزرسانی شود.
+          تاریخ آخرین ویرایش در ابتدای صفحه درج می‌شود و ادامه استفاده از پلتفرم پس از
+          انتشار نسخه جدید به‌معنای پذیرش آن خواهد بود.
+        </p>
+      </section>
+
+      <hr class="my-8 border-ink/[0.06]">
+
+      <section id="contact" class="terms-section">
+        <h2 class="text-xl font-extrabold text-forestDark">۱۴. ارتباط با پاستیل</h2>
+
+        <p class="mt-4 text-sm text-ink/60 leading-8">
+          برای پرسش درباره این مقررات، گزارش تخلف یا درخواست بررسی حساب، از راه‌های ارتباطی
+          رسمی اعلام‌شده در وب‌سایت پاستیل استفاده کنید. مکاتبات مرتبط با اختلاف یا گزارش
+          تخلف باید شامل اطلاعات کافی برای بررسی موضوع باشد.
+        </p>
+      </section>
+
+      <div class="mt-10 bg-mist rounded-2xl p-5 text-center">
+        <p class="text-sm font-extrabold text-forestDark">
+          با ادامه استفاده از پاستیل، مفاد این قوانین و مقررات را می‌پذیرید.
+        </p>
+
+        <button
+          type="button"
+          onclick="window.close(); if (!window.closed) history.back();"
+          class="mt-4 inline-flex items-center justify-center bg-forest hover:bg-forestDark text-white text-sm font-bold px-6 py-3 rounded-xl transition-colors"
+        >
+          مطالعه کردم؛ بازگشت
+        </button>
+      </div>
+
+    </article>
+  </div>
+</main>
+
+<footer class="bg-white border-t border-ink/[0.06] mt-10">
+  <div class="max-w-6xl mx-auto px-5 sm:px-7 lg:px-10 py-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+    <p class="text-xs text-ink/40">
+      © ۱۴۰۵ پاستیل، پلتفرم نوبت‌دهی دامپزشکی
+    </p>
+
+    <a href="index.html" class="text-xs font-bold text-forest hover:text-forestDark">
+      بازگشت به صفحه اصلی
+    </a>
+  </div>
+</footer>
+
+</body>
+</html>
