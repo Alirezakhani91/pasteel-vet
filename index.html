@@ -348,6 +348,59 @@
     color: #ffffff;
   }
 
+
+  .homepage-global-doctor-sidebar {
+    position: fixed;
+    top: 96px;
+    right: 18px;
+    bottom: 18px;
+    width: 300px;
+    z-index: 42;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(127,167,147,.65) transparent;
+  }
+
+  .homepage-global-doctor-sidebar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .homepage-global-doctor-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(127,167,147,.65);
+    border-radius: 999px;
+  }
+
+  .homepage-global-doctor-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  @media (min-width: 1280px) {
+    body {
+      padding-right: 326px;
+    }
+
+    .homepage-global-doctor-sidebar {
+      display: block;
+    }
+  }
+
+  @media (min-width: 1280px) and (max-width: 1599px) {
+    .desktop-main-nav {
+      display: none !important;
+    }
+
+    .desktop-menu-trigger {
+      display: inline-flex !important;
+    }
+  }
+
+  @media (min-width: 1600px) {
+    .desktop-menu-trigger {
+      display: none !important;
+    }
+  }
+
 </style>
 </head>
 <body class="bg-cream text-ink antialiased selection:bg-lagoon/30">
@@ -369,7 +422,7 @@
       <span class="text-xl font-extrabold tracking-tight text-forestDark">پاستیل</span>
     </a>
 
-    <nav class="hidden md:flex items-center gap-9 text-[15px] font-medium text-ink/70">
+    <nav class="desktop-main-nav hidden md:flex items-center gap-9 text-[15px] font-medium text-ink/70">
       <a href="#services" class="hover:text-forest transition-colors">خدمات</a>
       <a href="#how" class="hover:text-forest transition-colors">روند نوبت‌دهی</a>
       <a href="#doctors" class="hover:text-forest transition-colors">دامپزشکان</a>
@@ -377,27 +430,213 @@
       <a href="#faq" class="hover:text-forest transition-colors">سوالات متداول</a>
     </nav>
 
-    <div class="flex items-center gap-3">
-      <a href="auth.html" id="loginLink" class="hidden sm:inline-block text-sm font-semibold text-forest hover:text-forestDark transition-colors">ورود</a>
-      <a href="auth.html" class="booking-cta bg-forest hover:bg-forestDark text-white text-sm font-bold px-5 py-2.5 rounded-full transition-all shadow-sm shadow-forest/20 hover:shadow-md hover:shadow-forest/30">
+    <div class="flex items-center gap-2.5">
+      <div id="desktopAccountLinks" class="hidden sm:flex items-center gap-2">
+        <a
+          href="auth.html?account=pet-owner"
+          id="petOwnerAccountLink"
+          class="inline-flex items-center justify-center border border-forest/15 bg-white hover:bg-mist text-forest text-xs font-extrabold px-4 py-2.5 rounded-full transition-colors whitespace-nowrap"
+        >
+          حساب سرپرست
+        </a>
+
+        <a
+          href="auth.html?account=doctor"
+          id="doctorAccountLink"
+          class="inline-flex items-center justify-center bg-mist hover:bg-forest hover:text-white text-forest text-xs font-extrabold px-4 py-2.5 rounded-full transition-colors whitespace-nowrap"
+        >
+          حساب دامپزشک
+        </a>
+      </div>
+
+      <a
+        href="auth.html?account=pet-owner"
+        class="booking-cta bg-forest hover:bg-forestDark text-white text-sm font-bold px-5 py-2.5 rounded-full transition-all shadow-sm shadow-forest/20 hover:shadow-md hover:shadow-forest/30 whitespace-nowrap"
+      >
         دریافت نوبت
       </a>
-      <button id="menuBtn" class="md:hidden p-2 text-ink/70" aria-label="باز کردن منو">
+
+      <button id="menuBtn" class="desktop-menu-trigger md:hidden p-2 text-ink/70 items-center justify-center" aria-label="باز کردن منو">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
     </div>
   </div>
 
   <!-- mobile menu -->
-  <div id="mobileMenu" class="hidden md:hidden px-6 pb-5 flex flex-col gap-4 text-ink/75 font-medium border-t border-ink/[0.06] pt-4">
+  <div id="mobileMenu" class="hidden min-[1600px]:hidden px-6 pb-5 flex flex-col gap-4 text-ink/75 font-medium border-t border-ink/[0.06] pt-4">
     <a href="#services" class="hover:text-forest">خدمات</a>
     <a href="#how" class="hover:text-forest">روند نوبت‌دهی</a>
     <a href="#doctors" class="hover:text-forest">دامپزشکان</a>
     <a href="#testimonials" class="hover:text-forest">نظرات</a>
     <a href="#faq" class="hover:text-forest">سوالات متداول</a>
-    <a href="auth.html" id="mobileLoginLink" class="text-forest font-semibold">ورود</a>
+    <div class="grid grid-cols-2 gap-2 pt-2">
+      <a
+        href="auth.html?account=pet-owner"
+        id="mobilePetOwnerAccountLink"
+        class="text-center border border-forest/15 bg-white text-forest text-xs font-extrabold px-3 py-3 rounded-xl"
+      >
+        حساب سرپرست
+      </a>
+
+      <a
+        href="auth.html?account=doctor"
+        id="mobileDoctorAccountLink"
+        class="text-center bg-mist text-forest text-xs font-extrabold px-3 py-3 rounded-xl"
+      >
+        حساب دامپزشک
+      </a>
+    </div>
   </div>
 </header>
+
+<!-- ===================== GLOBAL DOCTOR SIDEBAR - DESKTOP ===================== -->
+<aside id="globalDoctorSidebar" class="homepage-global-doctor-sidebar hidden">
+      <div class="home-doctor-filter-sidebar relative overflow-hidden bg-white/95 backdrop-blur-xl border border-ink/[0.07] rounded-[2rem] p-6">
+        <div class="flex items-center justify-between gap-3 mb-1">
+          <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold text-forest bg-mist px-2.5 py-1 rounded-full">
+            همیشه در دسترس
+          </span>
+          <a href="#doctors" class="text-[10px] font-bold text-ink/40 hover:text-forest">
+            مشاهده پزشکان
+          </a>
+        </div>
+        <div aria-hidden="true" class="absolute -top-16 -left-14 w-40 h-40 rounded-full bg-blush/60"></div>
+        <div aria-hidden="true" class="absolute -bottom-20 -right-16 w-48 h-48 rounded-full bg-mist/80"></div>
+
+        <div class="relative">
+          <div class="w-12 h-12 rounded-2xl bg-mist text-forest flex items-center justify-center">
+            <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="8" r="4"/>
+              <path d="M5 21a7 7 0 0 1 14 0"/>
+              <path d="M18.5 4.5 20 6l2.5-2.5"/>
+            </svg>
+          </div>
+
+          <h3 class="text-lg font-extrabold text-forestDark mt-4">
+            دامپزشک خود را پیدا کنید
+          </h3>
+
+          <p class="text-xs text-ink/50 leading-6 mt-2">
+            دامپزشکان فعال در پاستیل متخصصان مستقلی هستند که اطلاعات حرفه‌ای آن‌ها پیش از فعال‌شدن حساب بررسی شده است.
+          </p>
+
+          <div class="mt-6 space-y-5">
+
+            <div>
+              <label for="homeDoctorSidebarSearchInput" class="block text-xs font-extrabold text-forestDark mb-2">
+                نام یا تخصص
+              </label>
+
+              <div class="relative">
+                <input
+                  id="homeDoctorSidebarSearchInput"
+                  type="search"
+                  autocomplete="off"
+                  placeholder="مثلاً جراحی یا مریم..."
+                  class="w-full bg-cream/70 border border-ink/10 rounded-xl pr-10 pl-10 py-3 text-xs text-forestDark outline-none focus:bg-white focus:border-forest focus:ring-4 focus:ring-forest/10 transition-all"
+                >
+
+                <svg class="absolute right-3.5 top-1/2 -translate-y-1/2 text-forest pointer-events-none" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="7"/>
+                  <path d="M20 20l-3.5-3.5"/>
+                </svg>
+
+                <button
+                  id="clearHomeDoctorSidebarSearchBtn"
+                  type="button"
+                  class="hidden absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-white text-ink/40 hover:bg-forest hover:text-white transition-colors items-center justify-center"
+                  aria-label="پاک کردن جست‌وجو"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round">
+                    <path d="M18 6 6 18M6 6l12 12"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label for="homeDoctorSpecialtyFilter" class="block text-xs font-extrabold text-forestDark mb-2">
+                تخصص
+              </label>
+
+              <select id="homeDoctorSpecialtyFilter" class="home-doctor-filter-select w-full bg-cream/70 border border-ink/10 rounded-xl px-4 py-3 text-xs text-forestDark outline-none focus:bg-white focus:border-forest">
+                <option value="">همه تخصص‌ها</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="homeDoctorCityFilter" class="block text-xs font-extrabold text-forestDark mb-2">
+                شهر
+              </label>
+
+              <select id="homeDoctorCityFilter" class="home-doctor-filter-select w-full bg-cream/70 border border-ink/10 rounded-xl px-4 py-3 text-xs text-forestDark outline-none focus:bg-white focus:border-forest">
+                <option value="">همه شهرها</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="homeDoctorServiceFilter" class="block text-xs font-extrabold text-forestDark mb-2">
+                خدمت قابل ارائه
+              </label>
+
+              <select id="homeDoctorServiceFilter" class="home-doctor-filter-select w-full bg-cream/70 border border-ink/10 rounded-xl px-4 py-3 text-xs text-forestDark outline-none focus:bg-white focus:border-forest">
+                <option value="">همه خدمات</option>
+              </select>
+            </div>
+
+            <div>
+              <p class="text-xs font-extrabold text-forestDark mb-2">
+                حداقل سابقه
+              </p>
+
+              <div class="flex flex-wrap gap-2">
+                <button type="button" data-home-experience-filter="0" class="home-doctor-filter-chip active border border-ink/10 rounded-full px-3 py-1.5 text-[11px] font-bold text-ink/55">
+                  مهم نیست
+                </button>
+
+                <button type="button" data-home-experience-filter="3" class="home-doctor-filter-chip border border-ink/10 rounded-full px-3 py-1.5 text-[11px] font-bold text-ink/55">
+                  ۳ سال
+                </button>
+
+                <button type="button" data-home-experience-filter="5" class="home-doctor-filter-chip border border-ink/10 rounded-full px-3 py-1.5 text-[11px] font-bold text-ink/55">
+                  ۵ سال
+                </button>
+
+                <button type="button" data-home-experience-filter="10" class="home-doctor-filter-chip border border-ink/10 rounded-full px-3 py-1.5 text-[11px] font-bold text-ink/55">
+                  ۱۰ سال
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label for="homeDoctorSortFilter" class="block text-xs font-extrabold text-forestDark mb-2">
+                مرتب‌سازی
+              </label>
+
+              <select id="homeDoctorSortFilter" class="home-doctor-filter-select w-full bg-cream/70 border border-ink/10 rounded-xl px-4 py-3 text-xs text-forestDark outline-none focus:bg-white focus:border-forest">
+                <option value="default">پیشنهاد پاستیل</option>
+                <option value="experience-desc">بیشترین سابقه</option>
+                <option value="name-asc">نام، به ترتیب الفبا</option>
+              </select>
+            </div>
+
+            <button
+              id="resetHomeDoctorFiltersBtn"
+              type="button"
+              class="w-full border border-forest/15 hover:bg-mist text-forest text-xs font-extrabold py-3 rounded-xl transition-colors"
+            >
+              پاک‌کردن همه فیلترها
+            </button>
+          </div>
+
+          <div class="mt-6 pt-5 border-t border-ink/[0.06]">
+            <p id="homeDoctorSidebarResultCount" class="text-xs font-bold text-forest">
+              در حال دریافت دامپزشکان...
+            </p>
+          </div>
+        </div>
+      </div>
+    </aside>
 
 <!-- ===================== HERO ===================== -->
 <section class="relative overflow-hidden">
@@ -799,148 +1038,9 @@
     </div>
   </div>
 
-  <div class="grid xl:grid-cols-[300px_minmax(0,1fr)] gap-7 items-start">
+  <div>
 
-    <!-- Desktop-only doctor sidebar -->
-    <aside class="hidden xl:block xl:sticky xl:top-28 xl:self-start">
-      <div class="home-doctor-filter-sidebar relative overflow-hidden bg-white border border-ink/[0.06] rounded-[2rem] p-6">
-        <div aria-hidden="true" class="absolute -top-16 -left-14 w-40 h-40 rounded-full bg-blush/60"></div>
-        <div aria-hidden="true" class="absolute -bottom-20 -right-16 w-48 h-48 rounded-full bg-mist/80"></div>
 
-        <div class="relative">
-          <div class="w-12 h-12 rounded-2xl bg-mist text-forest flex items-center justify-center">
-            <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <circle cx="12" cy="8" r="4"/>
-              <path d="M5 21a7 7 0 0 1 14 0"/>
-              <path d="M18.5 4.5 20 6l2.5-2.5"/>
-            </svg>
-          </div>
-
-          <h3 class="text-lg font-extrabold text-forestDark mt-4">
-            دامپزشک خود را پیدا کنید
-          </h3>
-
-          <p class="text-xs text-ink/50 leading-6 mt-2">
-            دامپزشکان فعال در پاستیل متخصصان مستقلی هستند که اطلاعات حرفه‌ای آن‌ها پیش از فعال‌شدن حساب بررسی شده است.
-          </p>
-
-          <div class="mt-6 space-y-5">
-
-            <div>
-              <label for="homeDoctorSidebarSearchInput" class="block text-xs font-extrabold text-forestDark mb-2">
-                نام یا تخصص
-              </label>
-
-              <div class="relative">
-                <input
-                  id="homeDoctorSidebarSearchInput"
-                  type="search"
-                  autocomplete="off"
-                  placeholder="مثلاً جراحی یا مریم..."
-                  class="w-full bg-cream/70 border border-ink/10 rounded-xl pr-10 pl-10 py-3 text-xs text-forestDark outline-none focus:bg-white focus:border-forest focus:ring-4 focus:ring-forest/10 transition-all"
-                >
-
-                <svg class="absolute right-3.5 top-1/2 -translate-y-1/2 text-forest pointer-events-none" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="11" cy="11" r="7"/>
-                  <path d="M20 20l-3.5-3.5"/>
-                </svg>
-
-                <button
-                  id="clearHomeDoctorSidebarSearchBtn"
-                  type="button"
-                  class="hidden absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-white text-ink/40 hover:bg-forest hover:text-white transition-colors items-center justify-center"
-                  aria-label="پاک کردن جست‌وجو"
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round">
-                    <path d="M18 6 6 18M6 6l12 12"/>
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <label for="homeDoctorSpecialtyFilter" class="block text-xs font-extrabold text-forestDark mb-2">
-                تخصص
-              </label>
-
-              <select id="homeDoctorSpecialtyFilter" class="home-doctor-filter-select w-full bg-cream/70 border border-ink/10 rounded-xl px-4 py-3 text-xs text-forestDark outline-none focus:bg-white focus:border-forest">
-                <option value="">همه تخصص‌ها</option>
-              </select>
-            </div>
-
-            <div>
-              <label for="homeDoctorCityFilter" class="block text-xs font-extrabold text-forestDark mb-2">
-                شهر
-              </label>
-
-              <select id="homeDoctorCityFilter" class="home-doctor-filter-select w-full bg-cream/70 border border-ink/10 rounded-xl px-4 py-3 text-xs text-forestDark outline-none focus:bg-white focus:border-forest">
-                <option value="">همه شهرها</option>
-              </select>
-            </div>
-
-            <div>
-              <label for="homeDoctorServiceFilter" class="block text-xs font-extrabold text-forestDark mb-2">
-                خدمت قابل ارائه
-              </label>
-
-              <select id="homeDoctorServiceFilter" class="home-doctor-filter-select w-full bg-cream/70 border border-ink/10 rounded-xl px-4 py-3 text-xs text-forestDark outline-none focus:bg-white focus:border-forest">
-                <option value="">همه خدمات</option>
-              </select>
-            </div>
-
-            <div>
-              <p class="text-xs font-extrabold text-forestDark mb-2">
-                حداقل سابقه
-              </p>
-
-              <div class="flex flex-wrap gap-2">
-                <button type="button" data-home-experience-filter="0" class="home-doctor-filter-chip active border border-ink/10 rounded-full px-3 py-1.5 text-[11px] font-bold text-ink/55">
-                  مهم نیست
-                </button>
-
-                <button type="button" data-home-experience-filter="3" class="home-doctor-filter-chip border border-ink/10 rounded-full px-3 py-1.5 text-[11px] font-bold text-ink/55">
-                  ۳ سال
-                </button>
-
-                <button type="button" data-home-experience-filter="5" class="home-doctor-filter-chip border border-ink/10 rounded-full px-3 py-1.5 text-[11px] font-bold text-ink/55">
-                  ۵ سال
-                </button>
-
-                <button type="button" data-home-experience-filter="10" class="home-doctor-filter-chip border border-ink/10 rounded-full px-3 py-1.5 text-[11px] font-bold text-ink/55">
-                  ۱۰ سال
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <label for="homeDoctorSortFilter" class="block text-xs font-extrabold text-forestDark mb-2">
-                مرتب‌سازی
-              </label>
-
-              <select id="homeDoctorSortFilter" class="home-doctor-filter-select w-full bg-cream/70 border border-ink/10 rounded-xl px-4 py-3 text-xs text-forestDark outline-none focus:bg-white focus:border-forest">
-                <option value="default">پیشنهاد پاستیل</option>
-                <option value="experience-desc">بیشترین سابقه</option>
-                <option value="name-asc">نام، به ترتیب الفبا</option>
-              </select>
-            </div>
-
-            <button
-              id="resetHomeDoctorFiltersBtn"
-              type="button"
-              class="w-full border border-forest/15 hover:bg-mist text-forest text-xs font-extrabold py-3 rounded-xl transition-colors"
-            >
-              پاک‌کردن همه فیلترها
-            </button>
-          </div>
-
-          <div class="mt-6 pt-5 border-t border-ink/[0.06]">
-            <p id="homeDoctorSidebarResultCount" class="text-xs font-bold text-forest">
-              در حال دریافت دامپزشکان...
-            </p>
-          </div>
-        </div>
-      </div>
-    </aside>
 
     <div class="min-w-0">
 
@@ -2156,33 +2256,62 @@ async function loadServices() {
   // در غیر این صورت به صفحه‌ی ورود می‌روند.
   async function setupBookingLinks() {
     const { data: { session } } = await supabaseClient.auth.getSession();
-    const target = session ? 'booking.html' : 'auth.html';
+    const target = session ? 'booking.html' : 'auth.html?account=pet-owner';
     document.querySelectorAll('.booking-cta').forEach(el => { el.href = target; });
   }
 
-  // اگر کاربر لاگین کرده باشد، دکمه‌ی «ورود» به «حساب من» تبدیل می‌شود
-  // و مستقیم به داشبورد مناسب (بیمار یا ادمین/دکتر) می‌رود
-  async function setupAccountLink() {
+  // حساب‌های عمومی سایت جدا نمایش داده می‌شوند.
+  // هیچ عنوان یا دکمه عمومی با نام پنل مدیریت وجود ندارد.
+  async function setupAccountLinks() {
     const { data: { session } } = await supabaseClient.auth.getSession();
-    const loginLink = document.getElementById('loginLink');
-    const mobileLoginLink = document.getElementById('mobileLoginLink');
 
-    if (!session) return; // کاربر لاگین نکرده؛ لینک «ورود» همان‌طور می‌ماند
+    const petOwnerLinks = [
+      document.getElementById('petOwnerAccountLink'),
+      document.getElementById('mobilePetOwnerAccountLink')
+    ].filter(Boolean);
+
+    const doctorLinks = [
+      document.getElementById('doctorAccountLink'),
+      document.getElementById('mobileDoctorAccountLink')
+    ].filter(Boolean);
+
+    if (!session) return;
 
     const { data: profile } = await supabaseClient
       .from('profiles')
       .select('role')
       .eq('id', session.user.id)
-      .single();
+      .maybeSingle();
 
-    const target = (profile?.role === 'admin' || profile?.role === 'doctor')
-      ? 'admin-dashboard.html'
-      : 'dashboard.html';
+    const role = profile?.role;
 
-    [loginLink, mobileLoginLink].forEach(el => {
-      if (!el) return;
-      el.href = target;
-      el.textContent = 'حساب من';
+    if (role === 'doctor') {
+      petOwnerLinks.forEach(link => link.classList.add('hidden'));
+
+      doctorLinks.forEach(link => {
+        link.href = 'admin-dashboard.html';
+        link.textContent = 'حساب دامپزشک';
+      });
+
+      return;
+    }
+
+    if (role === 'admin') {
+      doctorLinks.forEach(link => link.classList.add('hidden'));
+
+      petOwnerLinks.forEach(link => {
+        link.href = 'admin-dashboard.html';
+        link.textContent = 'حساب من';
+      });
+
+      return;
+    }
+
+    doctorLinks.forEach(link => link.classList.add('hidden'));
+
+    petOwnerLinks.forEach(link => {
+      link.href = 'dashboard.html';
+      link.textContent = 'حساب سرپرست';
     });
   }
 
@@ -2190,7 +2319,7 @@ async function loadServices() {
     await loadServices();
     await loadDoctors();
     await setupBookingLinks();
-    await setupAccountLink();
+    await setupAccountLinks();
   })();
 </script>
 
