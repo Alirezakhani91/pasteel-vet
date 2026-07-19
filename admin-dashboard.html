@@ -263,6 +263,57 @@
   <!-- برنامه‌ی نوبت‌دهی (۴ هفته‌ی پیش رو، بر اساس تاریخ واقعی) -->
   <section id="weekScheduleSection" class="hidden bg-white rounded-[2rem] border border-ink/[0.06] p-7 mb-10">
     <h2 class="text-lg font-bold text-forestDark mb-1">برنامه‌ی نوبت‌دهی</h2>
+    <p class="text-sm text-ink/45 mb-5">ابتدا مدت زمان هر نوبت را مشخص کنید، سپس روزها و ساعت کاری خود را وارد کنید. ساعت‌های رزرو برای کاربران بر اساس همین فاصله ساخته می‌شوند.</p>
+
+    <div class="bg-cream/70 border border-ink/[0.06] rounded-2xl p-5 mb-6">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <h3 class="text-sm font-extrabold text-forestDark">
+            مدت زمان هر نوبت
+          </h3>
+
+          <p class="text-xs text-ink/45 leading-6 mt-1">
+            این تنظیم برای تمام روزهای کاری شما اعمال می‌شود. نوبت‌های قبلی با مدت زمان ثبت‌شده خودشان حفظ می‌شوند.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 w-full md:w-auto" role="radiogroup" aria-label="مدت زمان هر نوبت">
+          <label class="appointment-duration-option cursor-pointer">
+            <input
+              type="radio"
+              name="appointmentDurationMinutes"
+              value="15"
+              class="peer sr-only"
+            >
+
+            <span class="min-w-[120px] flex flex-col items-center justify-center border border-ink/10 bg-white text-ink/55 rounded-xl px-5 py-3 transition-all peer-checked:bg-forest peer-checked:text-white peer-checked:border-forest peer-focus-visible:ring-4 peer-focus-visible:ring-forest/15">
+              <strong class="text-base font-extrabold">۱۵ دقیقه</strong>
+              <small class="text-[10px] opacity-75 mt-0.5">نوبت‌های کوتاه‌تر</small>
+            </span>
+          </label>
+
+          <label class="appointment-duration-option cursor-pointer">
+            <input
+              type="radio"
+              name="appointmentDurationMinutes"
+              value="30"
+              class="peer sr-only"
+              checked
+            >
+
+            <span class="min-w-[120px] flex flex-col items-center justify-center border border-ink/10 bg-white text-ink/55 rounded-xl px-5 py-3 transition-all peer-checked:bg-forest peer-checked:text-white peer-checked:border-forest peer-focus-visible:ring-4 peer-focus-visible:ring-forest/15">
+              <strong class="text-base font-extrabold">۳۰ دقیقه</strong>
+              <small class="text-[10px] opacity-75 mt-0.5">نوبت‌های استاندارد</small>
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <p id="appointmentDurationStatus" class="text-[11px] text-ink/40 mt-3">
+        در حال دریافت تنظیم فعلی...
+      </p>
+    </div>
+
     <p class="text-sm text-ink/45 mb-5">برای هر روز، تاریخ دقیق آن را می‌بینید. تیک بزنید و ساعت کاری همان روز را مشخص کنید. با دکمه‌های زیر می‌توانید تا ۴ هفته‌ی آینده را جلو بروید. برای هر هفته جداگانه «ذخیره» بزنید.</p>
 
     <div class="flex items-center justify-between mb-4">
@@ -1100,7 +1151,55 @@
   // ---------------- برنامه‌ی نوبت‌دهی (۴ هفته‌ی واقعی پیش رو) ----------------
   let currentUserId = null;
   let weekOffset = 0;
+  let appointmentDurationMinutes = 30;
   const MAX_WEEK_OFFSET = 3; // یعنی در مجموع ۴ هفته (هفته‌ی ۱ تا ۴)
+
+  function getSelectedAppointmentDuration() {
+    const selected = document.querySelector(
+      'input[name="appointmentDurationMinutes"]:checked'
+    );
+
+    return Number(selected?.value) === 15 ? 15 : 30;
+  }
+
+  function applyAppointmentDurationSelection(duration) {
+    appointmentDurationMinutes = Number(duration) === 15 ? 15 : 30;
+
+    const radio = document.querySelector(
+      `input[name="appointmentDurationMinutes"][value="${appointmentDurationMinutes}"]`
+    );
+
+    if (radio) radio.checked = true;
+
+    const status = document.getElementById('appointmentDurationStatus');
+
+    status.textContent =
+      `فاصله شروع نوبت‌های شما ${JalaliUtil.toFaDigits(appointmentDurationMinutes)} دقیقه تنظیم شده است.`;
+    status.className = 'text-[11px] text-forest/75 mt-3';
+  }
+
+  async function loadAppointmentDuration() {
+    const status = document.getElementById('appointmentDurationStatus');
+
+    const { data, error } = await supabaseClient
+      .from('doctors')
+      .select('appointment_duration_minutes')
+      .eq('id', currentUserId)
+      .maybeSingle();
+
+    if (error) {
+      console.error('خطا در دریافت مدت نوبت:', error);
+
+      status.textContent =
+        'تنظیم مدت نوبت دریافت نشد. ابتدا فایل SQL مربوط به این قابلیت را اجرا کنید.';
+      status.className = 'text-[11px] text-red-600 mt-3';
+      return;
+    }
+
+    applyAppointmentDurationSelection(
+      data?.appointment_duration_minutes || 30
+    );
+  }
 
   function getWeekDates(offset) {
     const dates = [];
@@ -1169,6 +1268,7 @@
     errorBox.classList.add('hidden');
     successBox.classList.add('hidden');
 
+    const selectedDuration = getSelectedAppointmentDuration();
     const dates = getWeekDates(weekOffset);
     const rowsToInsert = [];
     let hasError = false;
@@ -1193,6 +1293,27 @@
     btn.disabled = true;
     btn.textContent = 'در حال ذخیره...';
 
+    const { error: durationError } = await supabaseClient
+      .from('doctors')
+      .update({
+        appointment_duration_minutes: selectedDuration
+      })
+      .eq('id', currentUserId);
+
+    if (durationError) {
+      console.error('خطا در ذخیره مدت نوبت:', durationError);
+
+      btn.disabled = false;
+      btn.textContent = 'ذخیره این هفته';
+
+      errorBox.textContent =
+        'مدت زمان نوبت ذخیره نشد. ابتدا فایل SQL این قابلیت را در Supabase اجرا کنید.';
+      errorBox.classList.remove('hidden');
+      return;
+    }
+
+    applyAppointmentDurationSelection(selectedDuration);
+
     await supabaseClient
       .from('doctor_date_overrides')
       .delete()
@@ -1215,7 +1336,8 @@
       return;
     }
 
-    successBox.textContent = 'برنامه‌ی این هفته با موفقیت ذخیره شد.';
+    successBox.textContent =
+      `برنامه این هفته و نوبت‌های ${JalaliUtil.toFaDigits(selectedDuration)} دقیقه‌ای با موفقیت ذخیره شد.`;
     successBox.classList.remove('hidden');
   });
 
@@ -1485,6 +1607,7 @@
       await loadMyServices();
 
       document.getElementById('weekScheduleSection').classList.remove('hidden');
+      await loadAppointmentDuration();
       await renderWeek();
     }
 
