@@ -102,6 +102,42 @@ tailwind.config = {
     color: #153F38;
     border-color: #7FA793;
   }
+
+  .field-select {
+    width: 100%;
+    padding: .8rem 1rem;
+    padding-left: 2.8rem;
+    border-radius: .8rem;
+    border: 1px solid rgba(22,35,31,.1);
+    outline: none;
+    font-size: .875rem;
+    background-color: #fff;
+    appearance: none;
+    cursor: pointer;
+    transition: border-color .2s ease, box-shadow .2s ease;
+    background-image:
+      linear-gradient(45deg, transparent 50%, #7FA793 50%),
+      linear-gradient(135deg, #7FA793 50%, transparent 50%);
+    background-position:
+      18px calc(50% - 2px),
+      13px calc(50% - 2px);
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+  }
+
+  .field-select:focus {
+    border-color: #1F5C52;
+    box-shadow: 0 0 0 3px rgba(31,92,82,.12);
+  }
+
+  .field-select:invalid {
+    color: rgba(22,35,31,.42);
+  }
+
+  .city-field-status {
+    min-height: 1.25rem;
+  }
+
 </style>
 </head>
 
@@ -354,8 +390,20 @@ tailwind.config = {
               </div>
 
               <div>
-                <label class="block text-sm font-bold text-forestDark mb-1.5">تخصص</label>
-                <input type="text" id="doctorSpecialty" required placeholder="مثلاً: دامپزشک عمومی" class="field-input">
+                <label for="doctorSpecialty" class="block text-sm font-bold text-forestDark mb-1.5">
+                  تخصص
+                </label>
+
+                <select id="doctorSpecialty" required class="field-select">
+                  <option value="" selected disabled>انتخاب تخصص</option>
+                  <option value="عمومی">عمومی</option>
+                  <option value="متخصص">متخصص</option>
+                  <option value="جراح">جراح</option>
+                </select>
+
+                <p class="text-[11px] text-ink/40 mt-1.5">
+                  یکی از عنوان‌های حرفه‌ای تعیین‌شده را انتخاب کنید.
+                </p>
               </div>
 
               <div>
@@ -367,8 +415,27 @@ tailwind.config = {
               </div>
 
               <div>
-                <label class="block text-sm font-bold text-forestDark mb-1.5">شهر محل فعالیت</label>
-                <input type="text" id="doctorCity" required placeholder="مثلاً: تهران" class="field-input">
+                <label for="doctorCity" class="block text-sm font-bold text-forestDark mb-1.5">
+                  شهر محل فعالیت
+                </label>
+
+                <input
+                  type="text"
+                  id="doctorCity"
+                  required
+                  list="iranCitiesList"
+                  autocomplete="off"
+                  placeholder="نام شهر را جست‌وجو و انتخاب کنید"
+                  class="field-input"
+                  aria-describedby="doctorCityStatus"
+                  disabled
+                >
+
+                <datalist id="iranCitiesList"></datalist>
+
+                <p id="doctorCityStatus" class="city-field-status text-[11px] text-ink/40 mt-1.5">
+                  در حال دریافت فهرست شهرهای ایران...
+                </p>
               </div>
             </div>
 
@@ -653,6 +720,223 @@ tailwind.config = {
   });
 
   applyAccountContext();
+
+  // ---------- Controlled Doctor Fields ----------
+  const ALLOWED_DOCTOR_SPECIALTIES = new Set([
+    'عمومی',
+    'متخصص',
+    'جراح'
+  ]);
+
+  const IRAN_CITIES_CACHE_KEY = 'pasteel_iran_cities_v1';
+
+  const IRAN_CITIES_URLS = [
+    'https://cdn.jsdelivr.net/gh/sajaddp/list-of-cities-in-Iran@main/dist/json/cities.json',
+    'https://raw.githubusercontent.com/sajaddp/list-of-cities-in-Iran/main/dist/json/cities.json'
+  ];
+
+  let iranCityNames = [];
+  let iranCityNameSet = new Set();
+  let iranCitiesLoaded = false;
+  let iranCitiesLoadFailed = false;
+
+  function normalizeControlledText(value) {
+    return String(value || '')
+      .replace(/ي/g, 'ی')
+      .replace(/ك/g, 'ک')
+      .replace(/\u200c/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toLocaleLowerCase('fa-IR');
+  }
+
+  function extractCityItems(payload) {
+    if (Array.isArray(payload)) {
+      return payload;
+    }
+
+    if (!payload || typeof payload !== 'object') {
+      return [];
+    }
+
+    const directCollections = [
+      payload.cities,
+      payload.data,
+      payload.items,
+      payload.results
+    ];
+
+    for (const collection of directCollections) {
+      if (Array.isArray(collection)) {
+        return collection;
+      }
+    }
+
+    return Object.values(payload).flatMap(value =>
+      Array.isArray(value) ? value : []
+    );
+  }
+
+  function getCityName(item) {
+    if (typeof item === 'string') {
+      return item.trim();
+    }
+
+    if (!item || typeof item !== 'object') {
+      return '';
+    }
+
+    const possibleName =
+      item.name ??
+      item.title ??
+      item.city ??
+      item.city_name ??
+      item.cityName ??
+      item.name_fa ??
+      item.nameFa ??
+      item.persian_name ??
+      item.persianName;
+
+    return String(possibleName || '').trim();
+  }
+
+  function createIranCityOptions(cityNames) {
+    const list = document.getElementById('iranCitiesList');
+
+    const fragment = document.createDocumentFragment();
+
+    cityNames.forEach(cityName => {
+      const option = document.createElement('option');
+      option.value = cityName;
+      fragment.appendChild(option);
+    });
+
+    list.replaceChildren(fragment);
+  }
+
+  function applyIranCities(cityNames, sourceLabel = '') {
+    const cityInput = document.getElementById('doctorCity');
+    const status = document.getElementById('doctorCityStatus');
+
+    const normalizedUniqueCities = [
+      ...new Map(
+        cityNames
+          .map(name => String(name || '').trim())
+          .filter(Boolean)
+          .map(name => [normalizeControlledText(name), name])
+      ).values()
+    ].sort((a, b) => a.localeCompare(b, 'fa'));
+
+    if (!normalizedUniqueCities.length) {
+      throw new Error('City list is empty.');
+    }
+
+    iranCityNames = normalizedUniqueCities;
+    iranCityNameSet = new Set(
+      normalizedUniqueCities.map(normalizeControlledText)
+    );
+
+    createIranCityOptions(normalizedUniqueCities);
+
+    iranCitiesLoaded = true;
+    iranCitiesLoadFailed = false;
+
+    cityInput.disabled = false;
+    cityInput.placeholder = 'نام شهر را جست‌وجو و انتخاب کنید';
+
+    status.textContent =
+      `${normalizedUniqueCities.length.toLocaleString('fa-IR')} شهر آماده انتخاب است${sourceLabel ? ` (${sourceLabel})` : ''}.`;
+    status.className =
+      'city-field-status text-[11px] text-forest/70 mt-1.5';
+  }
+
+  async function fetchJsonFromAvailableSources(urls) {
+    let lastError = null;
+
+    for (const url of urls) {
+      try {
+        const response = await fetch(url, {
+          cache: 'force-cache'
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        return await response.json();
+      } catch (error) {
+        lastError = error;
+      }
+    }
+
+    throw lastError || new Error('City data could not be loaded.');
+  }
+
+  async function loadIranCities() {
+    const cityInput = document.getElementById('doctorCity');
+    const status = document.getElementById('doctorCityStatus');
+
+    if (!cityInput || !status) return;
+
+    try {
+      const cachedCities = JSON.parse(
+        localStorage.getItem(IRAN_CITIES_CACHE_KEY) || 'null'
+      );
+
+      if (Array.isArray(cachedCities) && cachedCities.length > 100) {
+        applyIranCities(cachedCities, 'ذخیره‌شده');
+      }
+    } catch (cacheError) {
+      localStorage.removeItem(IRAN_CITIES_CACHE_KEY);
+    }
+
+    try {
+      const payload = await fetchJsonFromAvailableSources(
+        IRAN_CITIES_URLS
+      );
+
+      const cityNames = extractCityItems(payload)
+        .map(getCityName)
+        .filter(Boolean);
+
+      applyIranCities(cityNames);
+
+      try {
+        localStorage.setItem(
+          IRAN_CITIES_CACHE_KEY,
+          JSON.stringify(iranCityNames)
+        );
+      } catch (storageError) {
+        console.warn(
+          'Iran cities cache was not saved:',
+          storageError
+        );
+      }
+    } catch (error) {
+      console.error('Iran cities loading error:', error);
+
+      if (iranCitiesLoaded) {
+        return;
+      }
+
+      iranCitiesLoadFailed = true;
+      cityInput.disabled = true;
+      cityInput.placeholder = 'فهرست شهرها بارگذاری نشد';
+
+      status.textContent =
+        'فهرست شهرها دریافت نشد. اتصال اینترنت را بررسی و صفحه را دوباره بارگذاری کنید.';
+      status.className =
+        'city-field-status text-[11px] text-red-600 mt-1.5';
+    }
+  }
+
+  function isValidIranCity(value) {
+    if (!iranCitiesLoaded) return false;
+
+    return iranCityNameSet.has(
+      normalizeControlledText(value)
+    );
+  }
 
   // ---------- Helpers ----------
   function setLoading(button, loading, label) {
@@ -1066,12 +1350,22 @@ tailwind.config = {
 
       if (!licenseNumber) {
         errorBox.textContent = 'شماره نظام دامپزشکی را وارد کنید.';
-      } else if (!specialty) {
-        errorBox.textContent = 'تخصص را وارد کنید.';
+      } else if (!ALLOWED_DOCTOR_SPECIALTIES.has(specialty)) {
+        errorBox.textContent =
+          'تخصص را از میان گزینه‌های عمومی، متخصص یا جراح انتخاب کنید.';
       } else if (!Number.isInteger(experience) || experience < 0 || experience > 80) {
         errorBox.textContent = 'سابقه فعالیت را به‌درستی وارد کنید.';
+      } else if (iranCitiesLoadFailed) {
+        errorBox.textContent =
+          'فهرست شهرهای ایران بارگذاری نشده است. صفحه را دوباره بارگذاری کنید.';
+      } else if (!iranCitiesLoaded) {
+        errorBox.textContent =
+          'فهرست شهرهای ایران هنوز در حال بارگذاری است. چند لحظه صبر کنید.';
       } else if (!city) {
-        errorBox.textContent = 'شهر محل فعالیت را وارد کنید.';
+        errorBox.textContent = 'شهر محل فعالیت را انتخاب کنید.';
+      } else if (!isValidIranCity(city)) {
+        errorBox.textContent =
+          'شهر محل فعالیت را حتماً از فهرست شهرهای ایران انتخاب کنید.';
       }
 
       if (errorBox.textContent) {
@@ -1332,6 +1626,29 @@ tailwind.config = {
       );
     }
   }
+
+  const doctorCityInput = document.getElementById(
+    'doctorCity'
+  );
+
+  doctorCityInput.addEventListener('change', () => {
+    if (!doctorCityInput.value) return;
+
+    if (!isValidIranCity(doctorCityInput.value)) {
+      doctorCityInput.setCustomValidity(
+        'شهر را از فهرست شهرهای ایران انتخاب کنید.'
+      );
+      return;
+    }
+
+    doctorCityInput.setCustomValidity('');
+  });
+
+  doctorCityInput.addEventListener('input', () => {
+    doctorCityInput.setCustomValidity('');
+  });
+
+  loadIranCities();
 
   // لمس و کلیک موبایل مستقیماً این تابع را اجرا می‌کند.
   doctorSubmitBtn.addEventListener('click', submitDoctorApplication);
